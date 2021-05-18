@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage{graphicx} 
+\usepackage{tabularx}
+\usepackage[dutch]{babel}
+\begin{document}
+\sffamily
+\begin{titlepage}
+  \centering
+    \vfill
+    {\bfseries\Huge
+      PVA Automated Systems, \\
+      Project codename Beezkneez
+        \vskip2cm
+      }
+      {\bfseries\Large
+        Mark Steijger\\
+      }
+      {
+        \bfseries\normalsize
+        0938713\\
+        \vskip1cm
+        \today\\
+    }    
+    \vfill
+    \includegraphics[width=4cm]{logohr.png} % also works with logo.pdf
+    \vfill
+    \vfill
+\end{titlepage}
+\newpage
+\tableofcontents
+
+\newpage
+\section{Inleiding}
+Zie hier een referentie naar Royce~\cite{royce1987managing} en nog een naar Clarke~\cite{modelchecking}\ldots 
+
+\include{OnderzoekImage}
+
+\newpage
+
+\newpage
+\bibliography{references}
+\bibliographystyle{plain}
+\end{document}
+
+
