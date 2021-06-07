@@ -9,6 +9,17 @@ tested with (and designed for) the flow deck.
 The MotionCommander uses velocity setpoints.
 
 Change the URI variable to your Crazyflie configuration.
+
+# schrijf een functie voor aanpassen van coordinaten / nieuwe objecten
+# schrijf een functie voor weghalen van obkjecten 
+# schrijf een functie voor het wegscchrijven van gebruikte paden
+# schrijf een functie voor het dynamish wegahalen van paden nadat ze zijn gevlogen
+# schrijf een functie voor het verplaatsen van end goal
+# schrijf een functie voor verweideren van een end goal
+
+#potentie?
+
+
 """
 import logging
 import time
@@ -29,49 +40,83 @@ URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
 
-#maak dit minimaal 30*30
+# maak dit minimaal 30*30
 map = [
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ]
-# schrijf een functie voor aanpassen van coordinaten / nieuwe objecten
-# schrijf een functie voor weghalen van obkjecten 
-# schrijf een functie voor het wegscchrijven van gebruikte paden
-# schrijf een functie voor het dynamish wegahalen van paden nadat ze zijn gevlogen
-# schrijf een functie voor het verplaatsen van end goal
-# schrijf een functie voor verweideren van een end goal
-
-#potentie?
 
 grid = Grid(matrix=map)
-start = grid.node(0, 0)
-end = grid.node(6, 6)
+
+# start = grid.node(1,1)
+def current_pos(x,y):
+    return grid.node(x,y)
+
+# end = grid.node(6, 6)
+def end_pos(x,y):
+    return grid.node(x,y)
 
 finder = AStarFinder(diagonal_movement=DiagonalMovement.never)
-path, runs = finder.find_path(start, end, grid)
+path = finder.find_path(current_pos(1,1), end_pos(8,9), grid)
 
-print('operations:', runs, 'path length:', len(path))
-print(path)
-# print(grid.grid_str(path=path, start=start, end=end))
+print(path[0], len(path[0]))
 
-# if __name__ == '__main__':
-    # grid = Grid(matrix=map)
-#     # Initialize the low-level drivers
-#     cflib.crtp.init_drivers()
+def get_diffrence(first, next):
+  x_dif = first[0] - next[0]
+  y_dif = first[1] - next[1]
+  return (x_dif, y_dif)
 
-#     with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
-#         # We take off when the commander is created
-#         with MotionCommander(scf) as mc:
+def follow_path(mc):
+  for index, coords in enumerate(path[0]):
+    if(index != 0):
+      move = get_diffrence(coords, last)
+      if(move == (0, 1)):
+        mc.forward(0.8)
+      elif(move == (0,-1)):
+        mc.back(0.8)
+      elif(move == (1, 0)):
+        mc.right(0.8)
+      elif(move == (-1,0)):
+        mc.left(0.8)
+    last = coords
+  
+  
 
+
+
+
+
+# print('operations:', runs, 'path length:', len(path))
+# print(grid.grid_str(path=path, start=current_pos(1,1), end=end_pos(8,11)))
+
+if __name__ == '__main__':
+    grid = Grid(matrix=map)
+    # Initialize the low-level drivers
+    cflib.crtp.init_drivers()
+
+    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
+        # We take off when the commander is created
+        with MotionCommander(scf) as mc:
+          follow_path(mc)
+          
 
