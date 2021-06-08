@@ -77,7 +77,7 @@ def end_pos(x,y):
     return grid.node(x,y)
 
 finder = AStarFinder(diagonal_movement=DiagonalMovement.never)
-path = finder.find_path(current_pos(1,1), end_pos(8,9), grid)
+path = finder.find_path(current_pos(11,17), end_pos(4,4), grid)
 
 print(path[0], len(path[0]))
 
@@ -87,23 +87,20 @@ def get_diffrence(first, next):
   return (x_dif, y_dif)
 
 def follow_path(mc):
+  print("moving")
   for index, coords in enumerate(path[0]):
     if(index != 0):
       move = get_diffrence(coords, last)
       if(move == (0, 1)):
-        mc.forward(0.8)
+        mc.forward(0.1)
       elif(move == (0,-1)):
-        mc.back(0.8)
+        mc.back(0.1)
       elif(move == (1, 0)):
-        mc.right(0.8)
+        mc.right(0.1)
       elif(move == (-1,0)):
-        mc.left(0.8)
+        mc.left(0.1)
     last = coords
   
-  
-
-
-
 
 
 # print('operations:', runs, 'path length:', len(path))
@@ -117,6 +114,7 @@ if __name__ == '__main__':
     with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
         # We take off when the commander is created
         with MotionCommander(scf) as mc:
+          # mc.take_off(height=20)
           follow_path(mc)
           
 
