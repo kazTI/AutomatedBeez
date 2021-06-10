@@ -10,12 +10,12 @@ The MotionCommander uses velocity setpoints.
 
 Change the URI variable to your Crazyflie configuration.
 
-# schrijf een functie voor aanpassen van coordinaten / nieuwe objecten
-# schrijf een functie voor weghalen van obkjecten 
-# schrijf een functie voor het wegscchrijven van gebruikte paden
-# schrijf een functie voor het dynamish wegahalen van paden nadat ze zijn gevlogen
-# schrijf een functie voor het verplaatsen van end goal
-# schrijf een functie voor verweideren van een end goal
+# TODO: schrijf een functie voor aanpassen van coordinaten / nieuwe objecten
+# TODO: schrijf een functie voor weghalen van obkjecten 
+# TODO: schrijf een functie voor het wegscchrijven van gebruikte paden
+# TODO: schrijf een functie voor het dynamish wegahalen van paden nadat ze zijn gevlogen
+# TODO: schrijf een functie voor het verplaatsen van end goal
+# TODO: schrijf een functie voor verweideren van een end goal
 
 #potentie?
 
@@ -30,56 +30,50 @@ from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils import uri_helper
 
+
 import pathfinding
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 
-URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
-
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
 
-# maak dit minimaal 30*30
-map = [
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-]
+URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
 
-grid = Grid(matrix=map)
 
-# start = grid.node(1,1)
+
+# creates a grid of given dimensions and borders it up 
+def create_grid(row, column):
+
+  map = [[0 for x in range(row)] for y in range(column)]
+
+  for i in range(column):
+    for j in range(row):
+      if(i == 0 or i ==row):
+        map[i][j] = 0
+      elif(j == 0 or j == column):
+        map[i][j] = 0
+      else:
+        map[i][j] = 1
+
+  return map
+
+def create_obstacle(x, y):
+  grid[x][y] = 0
+
+def remove_obstacle(x, y):
+  grid[x][y] = 1
+
+def mark_path():
+  for coords in path[0]:
+    create_obstacle(coords[0], coords[1])
+
 def current_pos(x,y):
-    return grid.node(x,y)
+  return grid.node(x,y)
 
-# end = grid.node(6, 6)
 def end_pos(x,y):
-    return grid.node(x,y)
-
-finder = AStarFinder(diagonal_movement=DiagonalMovement.never)
-path = finder.find_path(current_pos(11,17), end_pos(4,4), grid)
-
-print(path[0], len(path[0]))
+  return grid.node(x,y)
 
 def get_diffrence(first, next):
   x_dif = first[0] - next[0]
@@ -87,34 +81,50 @@ def get_diffrence(first, next):
   return (x_dif, y_dif)
 
 def follow_path(mc):
+  print(grid.grid_str(path=path, start=current_pos(1,1), end=end_pos(8,11)))
+  mark_path()
+
+
   print("moving")
   for index, coords in enumerate(path[0]):
     if(index != 0):
       move = get_diffrence(coords, last)
-      if(move == (0, 1)):
+      if(move == (0, 1)):        
         mc.forward(0.1)
-      elif(move == (0,-1)):
+      elif(move == (0,-1)):        
         mc.back(0.1)
-      elif(move == (1, 0)):
+      elif(move == (1, 0)):        
         mc.right(0.1)
-      elif(move == (-1,0)):
+      elif(move == (-1,0)):        
         mc.left(0.1)
+    
     last = coords
-  
+    remove_obstacle(last[0], last[1])
+    print(grid)
+
+
+
+# create the grid for global use to share variables
+grid = Grid(matrix=create_grid(18,18))
+finder = AStarFinder(diagonal_movement=DiagonalMovement.never)
+
+path = finder.find_path(current_pos(11,17), end_pos(4,4), grid)
+
 
 
 # print('operations:', runs, 'path length:', len(path))
 # print(grid.grid_str(path=path, start=current_pos(1,1), end=end_pos(8,11)))
+print(path[0], len(path[0]))
 
-if __name__ == '__main__':
-    grid = Grid(matrix=map)
-    # Initialize the low-level drivers
-    cflib.crtp.init_drivers()
+# if __name__ == '__main__':
+#     grid = Grid(matrix=map)
+#     # Initialize the low-level drivers
+#     cflib.crtp.init_drivers()
 
-    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
-        # We take off when the commander is created
-        with MotionCommander(scf) as mc:
-          # mc.take_off(height=20)
-          follow_path(mc)
+#     with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
+#         # We take off when the commander is created
+#         with MotionCommander(scf) as mc:
+#           # mc.take_off(height=20)
+#           follow_path(mc)
           
 
