@@ -8,4 +8,6 @@
 *.blg
 *.toc
 *.pdf
-
+Code/.vscode
+Code/drone_simulation/controllers/lib/__pycache__
+Code/drone_simulation/controllers/lib/credentials.py
