@@ -1,6 +1,5 @@
 import json
 import paho.mqtt.client as mqtt
-from multiprocessing import Process
 
 class PositionHandler:
     def __init__(self, position, offset):
@@ -8,22 +7,29 @@ class PositionHandler:
         self.start_position = [sum(x) for x in zip(position, offset)]
 
     def generateAbsoluteGrid(self, length, tile_size):
+        self.length = length
+        self.tile_size = tile_size
         self.absolute_grid = int (length / tile_size)
 
     def getDestCoordX(self, x):
         if x > self.absolute_grid-1 or x < 0:
-            raise Exception('Please assign grid value from the following range [0 - 9]')
+            raise Exception(f'Please assign grid value from the following range [0 - {self.absolute_grid-1}]')
         else:
-            dest_coord_x = x / self.absolute_grid + self.offset[0]
+            dest_coord_x = x * self.length / self.absolute_grid + self.offset[0]
             return dest_coord_x
 
     def getDestCoordZ(self, z):
         if z > self.absolute_grid-1 or z < 0:
-            raise Exception('Please assign grid value from the following range [0 - 9]')
+            raise Exception(f'Please assign grid value from the following range [0 - {self.absolute_grid-1}]')
         else:
-            dest_coord_z = z / self.absolute_grid + self.offset[0]
+            dest_coord_z = z * self.length / self.absolute_grid + self.offset[0]
             return dest_coord_z
 
+    def getAbsoluteCoordX(self, x):
+        return int(self.absolute_grid * ((x - self.offset[0]) / self.length))
+
+    def getAbsoluteCoordZ(self, z):
+        return int(self.absolute_grid * ((z - self.offset[2]) / self.length))
 
 class MqttClient:
     # initialize MqttClient for communication with Mqtt broker
@@ -76,7 +82,7 @@ class MqttClient:
         errorMessage = f'[{self.name}] Connection refused'
         if connectionResult == 0:
             for topic in self.assigned_topics:
-                self.client.subscribe(topic, 1)
+                self.client.subscribe(topic, 2)
         elif connectionResult == 1:
             print(errorMessage, 'incorrect protocol version')
         elif connectionResult == 2:
@@ -96,6 +102,7 @@ class MqttClient:
         message = str(message.payload.decode('utf-8'))
         message = json.loads(message)
         self.messages.append(message)
+        self.sendPublish(self.name + '_response', 'ack', 2) ##
 
 if __name__ == '__main__':
     x = 1
