@@ -5,11 +5,57 @@ import time
 import cv2
 import numpy as np
 import sys
+import operator
 
-np.set_printoptions(threshold=sys.maxsize)
+#----------------------------FUNCTIES----------------------------
+def maskcolor(weak_strength, stronger_strength):
+	imagex = cv2.imread("newimage.jpg")
+
+	# Convert BGR to HSV
+	hsv = cv2.cvtColor(imagex, cv2.COLOR_BGR2HSV)
+
+	# define color strenght parameters in HSV
+	weaker = np.array(weak_strength)
+	stronger = np.array(stronger_strength)
+
+	# Threshold the HSV image to obtain input color
+	mask = cv2.inRange(hsv, weaker, stronger)
+
+	cv2.imshow('Result',mask)
+
+	return mask.tolist()
+
+def avgpoint(givenmask):
+	print(len(givenmask))
+	list_coords = []
+	for i in range(len(givenmask)):
+	    for j in range(1280):
+ 	       if givenmask[i][j] == 255:
+ 	           list_coords.append((j, i))
+
+	#print (list_coords)
+
+
+	xval = 0
+	yval = 0
+
+	print len(list_coords)
+	for i in range(len(list_coords)):
+		xval += list_coords[i][0]
+		yval += list_coords[i][1]
+
+	xval = xval / len(list_coords)
+	yval = yval / len(list_coords)
+
+	print xval
+	print yval
+	return xval, yval
+
+#----------------------------------------------------------------
 
 # initialize the camera and grab a reference to the raw camera capture
 camera = PiCamera()
+camera.resolution = (1280, 720)
 rawCapture = PiRGBArray(camera)
 # allow the camera to warmup
 time.sleep(0.1)
@@ -17,32 +63,15 @@ time.sleep(0.1)
 camera.capture(rawCapture, format="bgr")
 image = rawCapture.array
 cv2.imwrite("newimage.jpg", image)
-
-# image = cv2.imread("coloredchips.png")
-imagex = cv2.imread("newimage.jpg")
-
-# Convert BGR to HSV
-hsv = cv2.cvtColor(imagex, cv2.COLOR_BGR2HSV)
-
-
-# define color strenght parameters in HSV
-weaker = np.array([110, 100, 100])
-stronger = np.array([130,255,255])
-
-lower_blue = np.array([90,50,70])
-upper_blue = np.array([128,255,255])
-
-# Threshold the HSV image to obtain input color
-mask = cv2.inRange(hsv, weaker, stronger)
-
-# Threshold the HSV image to obtain input color (blue)
-bluemask = cv2.inRange(hsv, lower_blue, upper_blue)
-
-print bluemask
-
 cv2.imshow('Image',image)
-cv2.imshow('Result',mask)
-cv2.imshow('ResultBlue',bluemask)
+
+# definieer kleuren die gefilterd wordt
+bluemask = maskcolor([90, 50, 70], [128, 255, 255])
+
+#print bluemask
+
+blue_avg = avgpoint(bluemask)
+print blue_avg
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()

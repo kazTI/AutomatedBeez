@@ -5,11 +5,13 @@ import time
 import cv2
 import numpy as np
 import sys
+import operator
 
 np.set_printoptions(threshold=sys.maxsize)
 
 # initialize the camera and grab a reference to the raw camera capture
 camera = PiCamera()
+camera.resolution = (1280, 720)
 rawCapture = PiRGBArray(camera)
 # allow the camera to warmup
 time.sleep(0.1)
@@ -29,8 +31,8 @@ hsv = cv2.cvtColor(imagex, cv2.COLOR_BGR2HSV)
 weaker = np.array([110, 100, 100])
 stronger = np.array([130,255,255])
 
-lower_blue = np.array([90,50,70])
-upper_blue = np.array([128,255,255])
+lower_blue = np.array([25, 50, 70])
+upper_blue = np.array([35, 255, 255])
 
 # Threshold the HSV image to obtain input color
 mask = cv2.inRange(hsv, weaker, stronger)
@@ -38,11 +40,24 @@ mask = cv2.inRange(hsv, weaker, stronger)
 # Threshold the HSV image to obtain input color (blue)
 bluemask = cv2.inRange(hsv, lower_blue, upper_blue)
 
-print bluemask
-
 cv2.imshow('Image',image)
 cv2.imshow('Result',mask)
 cv2.imshow('ResultBlue',bluemask)
+
+# van pixel lijst naar normale lijst (met komma)
+bluemask = bluemask.tolist()
+
+#print bluemask
+#print type(bluemask)
+
+print(len(bluemask))
+list_coords = []
+for i in range(len(bluemask)):
+    for j in range(i):
+        if bluemask[i][j] == 255:
+            list_coords.append((j, i))
+    
+print (list_coords)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
