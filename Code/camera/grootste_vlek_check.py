@@ -7,74 +7,93 @@ import numpy as np
 import sys
 import operator
 
-#----------------------------FUNCTIES----------------------------
-def maskcolor(weak_strength, stronger_strength):
-	imagex = cv2.imread("newimage.jpg")
+initialized = False
 
-	# Convert BGR to HSV
-	hsv = cv2.cvtColor(imagex, cv2.COLOR_BGR2HSV)
+while True:
+	#----------------------------FUNCTIES----------------------------
+	def maskcolor(weak_strength, stronger_strength):
+		imagex = cv2.imread("newimage.jpg")
 
-	# define color strenght parameters in HSV
-	weaker = np.array(weak_strength)
-	stronger = np.array(stronger_strength)
+		# Convert BGR to HSV
+		hsv = cv2.cvtColor(imagex, cv2.COLOR_BGR2HSV)
 
-	# Threshold the HSV image to obtain input color
-	mask = cv2.inRange(hsv, weaker, stronger)
+		# define color strenght parameters in HSV
+		weaker = np.array(weak_strength)
+		stronger = np.array(stronger_strength)
 
-	cv2.imshow('Result',mask)
+		# Threshold the HSV image to obtain input color
+		mask = cv2.inRange(hsv, weaker, stronger)
 
-	return mask.tolist()
+		cv2.imshow('Result',mask)
 
-def avgpoint(givenmask):
-	print(len(givenmask))
-	list_coords = []
-	for i in range(len(givenmask)):
-	    for j in range(1280):
- 	       if givenmask[i][j] == 255:
- 	           list_coords.append((j, i))
+		return mask.tolist()
 
-	#print (list_coords)
+	def avgpoint(givenmask):
+		#print(len(givenmask))
+		list_coords = []
+		for i in range(len(givenmask)):
+		    for j in range(1280):
+ 		       if givenmask[i][j] == 255:
+ 		           list_coords.append((j, i))
+
+		#print (list_coords)
 
 
-	xval = 0
-	yval = 0
+		xval = 0
+		yval = 0
 
-	print len(list_coords)
-	for i in range(len(list_coords)):
-		xval += list_coords[i][0]
-		yval += list_coords[i][1]
+		#print len(list_coords)
+		for i in range(len(list_coords)):
+			xval += list_coords[i][0]
+			yval += list_coords[i][1]
 
-	xval = xval / len(list_coords)
-	yval = yval / len(list_coords)
+		xval = xval / len(list_coords)
+		yval = yval / len(list_coords)
 
-	print xval
-	print yval
-	return xval, yval
+		#print xval
+		#print yval
+		return xval, yval
 
-#----------------------------------------------------------------
+	def calc_distance(point1, point2):
+		distance = tuple(map(lambda i, j: i - j, point1, point2))
+		#schaal berekenen om van pixels naar centimeters om te zetten, en maak absoluut
+		return distance
+	#----------------------------------------------------------------
+	
+	if initialized == False:
+		# initialize the camera and grab a reference to the raw camera capture
+		camera = PiCamera()
+		camera.resolution = (1280, 720)
+		initialized = True
 
-# initialize the camera and grab a reference to the raw camera capture
-camera = PiCamera()
-camera.resolution = (1280, 720)
-rawCapture = PiRGBArray(camera)
-# allow the camera to warmup
-time.sleep(0.1)
-# grab an image from the camera
-camera.capture(rawCapture, format="bgr")
-image = rawCapture.array
-cv2.imwrite("newimage.jpg", image)
-cv2.imshow('Image',image)
+	rawCapture = PiRGBArray(camera)
+	# allow the camera to warmup
+	time.sleep(0.1)
+	# grab an image from the camera
+	camera.capture(rawCapture, format="bgr")
+	image = rawCapture.array
+	cv2.imwrite("newimage.jpg", image)
+	cv2.imshow('Image',image)
 
-# definieer kleuren die gefilterd wordt
-bluemask = maskcolor([90, 50, 70], [128, 255, 255])
+	# definieer kleuren die gefilterd wordt
+	bluemask = maskcolor([90, 50, 70], [128, 255, 255])
+	greenmask = maskcolor([36, 50, 70], [89, 255, 255])
 
-#print bluemask
+	#print bluemask
 
-blue_avg = avgpoint(bluemask)
-print blue_avg
+	blue_avg = avgpoint(bluemask)
+	green_avg = avgpoint(greenmask)
 
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+	print blue_avg
+	print green_avg
+
+	blue_green = calc_distance(blue_avg, green_avg)
+	print blue_green
+
+	time.sleep(0.2)
+
+	#cv2.waitKey(0)
+	#cv2.destroyAllWindows()
 
 #color_dict_HSV = {'black': [[180, 255, 30], [0, 0, 0]],
 #              'white': [[180, 18, 255], [0, 0, 231]],
