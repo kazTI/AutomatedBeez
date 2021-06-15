@@ -45,26 +45,24 @@ URI1 = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
 URI2 = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E8')
 
 
-def run_shared_sequence(scf):
-    with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
-        time.sleep(1)
-        mc.forward(0.5)
-        time.sleep(1)
-        mc.turn_left(180)
-        time.sleep(1)
-        mc.forward(0.5)
-        time.sleep(1)
-
 def foodSearch(uri):
     global drone2Working
     global drone1Working
     with SyncCrazyflie(uri, cf=Crazyflie(rw_cache='./cache')) as scf:
-        print('fine here')
         if uri == URI1:
             drone1Working = True
         else:
             drone2Working = True
-        run_shared_sequence(scf)
+
+        with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
+            time.sleep(1)
+            mc.forward(0.5)
+            time.sleep(1)
+            mc.turn_left(180)
+            time.sleep(1)
+            mc.forward(0.5)
+            time.sleep(1)
+
         if uri == URI1:
             drone1Working = False
         else:
@@ -74,12 +72,20 @@ def foodGet(uri):
     global drone2Working
     global drone1Working
     with SyncCrazyflie(uri, cf=Crazyflie(rw_cache='./cache')) as scf:
-        print('fine here')
         if uri == URI1:
             drone1Working = True
         else:
             drone2Working = True
-        run_shared_sequence(scf)
+
+        with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
+            time.sleep(1)
+            mc.forward(0.5)
+            time.sleep(1)
+            mc.turn_left(180)
+            time.sleep(1)
+            mc.forward(0.5)
+            time.sleep(1)
+
         if uri == URI1:
             drone1Working = False
         else:
@@ -89,12 +95,20 @@ def dance(uri):
     global drone2Working
     global drone1Working
     with SyncCrazyflie(uri, cf=Crazyflie(rw_cache='./cache')) as scf:
-        print('fine here')
         if uri == URI1:
             drone1Working = True
         else:
             drone2Working = True
-        run_shared_sequence(scf)
+
+        with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
+            time.sleep(1)
+            mc.forward(0.5)
+            time.sleep(1)
+            mc.turn_left(180)
+            time.sleep(1)
+            mc.forward(0.5)
+            time.sleep(1)
+
         if uri == URI1:
             drone1Working = False
         else:
