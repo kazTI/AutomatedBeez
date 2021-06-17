@@ -128,7 +128,11 @@ class MotionCommander:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.land()
 
-    def left(self, distance_m, velocity=VELOCITY):
+# ---------------------------------
+#   VERANDERDE WAARDEN
+# ---------------------------------
+
+    def left(self, distance_m, velocity):
         """
         Go left
 
@@ -138,7 +142,7 @@ class MotionCommander:
         """
         self.move_distance(0.0, distance_m, 0.0, velocity)
 
-    def right(self, distance_m, velocity=VELOCITY):
+    def right(self, distance_m, velocity):
         """
         Go right
 
@@ -148,7 +152,7 @@ class MotionCommander:
         """
         self.move_distance(0.0, -distance_m, 0.0, velocity)
 
-    def forward(self, distance_m, velocity=VELOCITY):
+    def forward(self, distance_m, velocity):
         """
         Go forward
 
@@ -158,7 +162,7 @@ class MotionCommander:
         """
         self.move_distance(distance_m, 0.0, 0.0, velocity)
 
-    def back(self, distance_m, velocity=VELOCITY):
+    def back(self, distance_m, velocity):
         """
         Go backwards
 
@@ -167,6 +171,10 @@ class MotionCommander:
         :return:
         """
         self.move_distance(-distance_m, 0.0, 0.0, velocity)
+
+# ---------------------------------
+#   VERANDERDE WAARDEN STOP
+# ---------------------------------
 
     def up(self, distance_m, velocity=VELOCITY):
         """

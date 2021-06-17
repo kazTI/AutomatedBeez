@@ -10,17 +10,27 @@ The MotionCommander uses velocity setpoints.
 
 Change the URI variable to your Crazyflie configuration.
 
-# TODO: schrijf een functie voor aanpassen van coordinaten / nieuwe objecten
-# TODO: schrijf een functie voor weghalen van obkjecten 
-# TODO: schrijf een functie voor het wegscchrijven van gebruikte paden
-# TODO: schrijf een functie voor het dynamish wegahalen van paden nadat ze zijn gevlogen
-# TODO: schrijf een functie voor het verplaatsen van end goal
-# TODO: schrijf een functie voor verweideren van een end goal
+# -------------------------------------------
+
+# TODO: funtie die afstand tussen mc + de mc als parameter heeft 
+#       en dan vervolgens de velocity van de achterste vertraagd
+#       dit kan ook met de huidige locatie als parameter
+#       def calc_velocity(distance)
+
+# TODO: schrijf een functie die de huidige locatie controleerd met de locatie die de camera aangeeft van de drone
+
+# TODO: schrijf een functie de de afstand tussen twee locaties uitrekend als een absolute waarde
+#       neem hiermee de scale mee
+
+# TODO: 
+
+# -------------------------------------------
 
 #potentie?
 
 
 """
+
 import logging
 import time
 
@@ -80,6 +90,12 @@ def get_diffrence(first, next):
   y_dif = first[1] - next[1]
   return (x_dif, y_dif)
 
+def calc_abs(uno, dos, size):
+  diff = get_diffrence(uno, dos)
+  
+  return abs(diff[0]-diff[1])
+
+
 def follow_path(mc):
   print(grid.grid_str(path=path, start=current_pos(1,1), end=end_pos(8,11)))
   mark_path()
@@ -90,13 +106,13 @@ def follow_path(mc):
     if(index != 0):
       move = get_diffrence(coords, last)
       if(move == (0, 1)):        
-        mc.forward(0.1)
+        mc.forward(distance_m = 0.1, velocity = 0.2)
       elif(move == (0,-1)):        
-        mc.back(0.1)
+        mc.back(distance_m = 0.1, velocity = 0.2)
       elif(move == (1, 0)):        
-        mc.right(0.1)
+        mc.right(distance_m = 0.1, velocity = 0.2)
       elif(move == (-1,0)):        
-        mc.left(0.1)
+        mc.left(distance_m = 0.1, velocity = 0.2)
     
     last = coords
     remove_obstacle(last[0], last[1])
@@ -115,6 +131,16 @@ path = finder.find_path(current_pos(11,17), end_pos(4,4), grid)
 # print('operations:', runs, 'path length:', len(path))
 # print(grid.grid_str(path=path, start=current_pos(1,1), end=end_pos(8,11)))
 print(path[0], len(path[0]))
+calc_abs((10,1),(5.7))
+
+
+
+
+
+
+
+
+
 
 # if __name__ == '__main__':
 #     grid = Grid(matrix=map)
