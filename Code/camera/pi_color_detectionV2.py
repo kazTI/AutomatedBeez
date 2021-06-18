@@ -27,10 +27,12 @@ def generateMask(hsv):
     R = cv2.getTrackbarPos("R", "Trackbars")
     rgb_color = np.uint8([[[B, G, R]]])
     hsv_color = cv2.cvtColor(rgb_color ,cv2.COLOR_BGR2HSV)
-    print(hsv_color)
     lowerLimit = np.uint8([hsv_color[0][0][0]-10,100,100])
     upperLimit = np.uint8([hsv_color[0][0][0]+10,255,255])
+    
     mask = cv2.inRange(hsv, lowerLimit, upperLimit)
+    
+    print(hsv_color)
     cv2.imshow('Mask', mask)
 
 
@@ -62,10 +64,10 @@ cv2.imshow('Color Calibration', button_background)
 
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
     image = frame.array
-    cv2.imshow("Camera stream", image)
-    
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
     generateMask(hsv)
+    cv2.imshow("Camera stream", image)
 
 
     rawCapture.truncate(0)
