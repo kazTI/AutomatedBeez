@@ -35,6 +35,8 @@ def generateMask(hsv):
 
 
 
+
+
 # initialize the camera
 camera = PiCamera()
 camera.resolution = (640, 480)
@@ -50,12 +52,14 @@ cv2.setMouseCallback('Color Calibration', mouseClicked)
 cv2.createTrackbar('B', 'Color Calibration', 0, 255, nothing)
 cv2.createTrackbar('G', 'Color Calibration', 0, 255, nothing)
 cv2.createTrackbar('R', 'Color Calibration', 0, 255, nothing)
+
+
 button = [20, 60, 50, 250]
 button_background = np.zeros((80,300), np.uint8)
 button_background[button[0]:button[1],button[2]:button[3]] = 180
 cv2.putText(button_background, 'Next', (100,50), cv2.FONT_HERSHEY_PLAIN, 2, (0), 3)
-
 cv2.imshow('Color Calibration', button_background)
+
 
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
     image = frame.array
