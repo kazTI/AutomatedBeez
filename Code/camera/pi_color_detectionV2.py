@@ -22,9 +22,9 @@ def mouseClicked(event, x, y, flags, params):
 
             
 def generateMask(hsv):
-    B = cv2.getTrackbarPos("B", "Trackbars")
-    G = cv2.getTrackbarPos("G", "Trackbars")
-    R = cv2.getTrackbarPos("R", "Trackbars")
+    B = cv2.getTrackbarPos('B', 'Color Calibration')
+    G = cv2.getTrackbarPos('G', 'Color Calibration')
+    R = cv2.getTrackbarPos('R', 'Color Calibration')
     rgb_color = np.uint8([[[B, G, R]]])
     hsv_color = cv2.cvtColor(rgb_color ,cv2.COLOR_BGR2HSV)
     lowerLimit = np.uint8([hsv_color[0][0][0]-10,100,100])
@@ -64,10 +64,10 @@ cv2.imshow('Color Calibration', button_background)
 
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
     image = frame.array
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-
-    generateMask(hsv)
     cv2.imshow("Camera stream", image)
+
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    generateMask(hsv)
 
 
     rawCapture.truncate(0)
