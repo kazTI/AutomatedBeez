@@ -10,25 +10,26 @@ import numpy as np
 import operator
 #print(sys.path)
 
-def generateMask(weak_strength, stronger_strength):
-    imagex = cv2.imread("masked_image.jpg")
-
+def generateMask(weak_strength, stronger_strength, image):
     # convert bgr to hsv and generate mask
-    hsv = cv2.cvtColor(imagex, cv2.COLOR_BGR2HSV)
+    #image = cv2.imread('temp.jpg')
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     weaker = np.array(weak_strength)
     stronger = np.array(stronger_strength)
     mask = cv2.inRange(hsv, weaker, stronger)
 
-    cv2.imshow('Masked_Image', mask)
+    #cv2.imshow('Masked_Image', mask)
 
     return mask.tolist()
 
 def getAvarageCoordinates(mask):
     list_coords = []
     for i in range(len(mask)):
-        for j in range(1280):
-            if mask[i][j] == 255:
-                list_coords.append((j, i))
+        if i > pixel_bound_y_low and i < pixel_bound_y_high: 
+            for j in range(1280):
+                if j > pixel_bound_x_low and j < pixel_bound_x_high:
+                    if mask[i][j] == 255:
+                        list_coords.append((j, i))
     #print (list_coords)
 
     xval = 0
@@ -76,11 +77,21 @@ mqttClient.createClient(clientName, subscribed_topics)
 mqttClient.startConnection()
 tm.sleep(5)
 
+
 pi_camera = PiCamera()
 pi_camera.resolution = (1280, 720)
 tm.sleep(1)
+image = PiRGBArray(pi_camera)
+pi_camera.capture(image, format="bgr")
+image = image.array
+cv2.imwrite("temp.jpg", image)
+greenmask = generateMask([36, 50, 70],[89, 255, 255], image)
 
-greenmask = generateMask([36, 50, 70],[89, 255, 255])
+
+pixel_bound_x_low = 640
+pixel_bound_x_high = 640
+pixel_bound_y_low = 360
+pixel_bound_y_high = 360
 list_coords = []
 for i in range(len(greenmask)):
     for j in range(1280):
@@ -105,27 +116,28 @@ while running:
     image = PiRGBArray(pi_camera)
     pi_camera.capture(image, format="bgr")
     image = image.array
-    #cv2.imshow("newimage.jpg", image)
+    # cv2.imwrite("temp.jpg", image)
 
-    bluemask = generateMask([90, 50, 70], [128, 255, 255])
+    bluemask = generateMask([90, 50, 70], [128, 255, 255], image)
     blue_pixel_coordinates = getAvarageCoordinates(bluemask)
+    print('Pixel coords: ', blue_pixel_coordinates)
     # greenmask = generateMask([36, 50, 70], [89, 255, 255])
     #green_avg = getAvarageCoordinates(greenmask)
 
     blue_grid_coordinates = calculateGridCoordinates(blue_pixel_coordinates, cells)
-
+    x = int(blue_pixel_coordinates[0])
+    y = int(blue_pixel_coordinates[1])
+    print('Grid coords: ', blue_grid_coordinates)
 
     # if test:
     #     cv2.imwrite("original_image.jpg", image)
     #     cv2.imshow('Original Image', image)
     
 
-    x = blue_pixel_coordinates[0]
-    y = blue_pixel_coordinates[1]
-    image = cv2.circle(image, (x, y), 10, (0, 0, 255), -1)
-    cv2.putText(image, f'Coords: {x, y}', (x-60, y-20),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        0.4, (0, 255, 0), 1)
+    # image = cv2.circle(image, (x, y), 10, (0, 0, 255), -1)
+    # cv2.putText(image, f'Coords: {x, y}', (x-60, y-20),
+                        # cv2.FONT_HERSHEY_SIMPLEX,
+                        # 0.4, (0, 255, 0), 1)
     cv2.imshow('Simulation Window', image)
 
 
