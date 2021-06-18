@@ -138,9 +138,13 @@ def findLocation(number):
     location = [x, y]
     return location
 
-def goTo(x, y, commander, uri):
+def goTo(position, destination, commander, uri):
         global drone2Working
         global drone1Working
+        a = findLocation(position)
+        b = findLocation(destination)
+        x = b[0] - a[0]
+        y = b[1] - a[1]
         commander.takeoff(0.5, flightTime)
         time.sleep(flightTime)
         print('this is fine')
@@ -275,12 +279,8 @@ if __name__ == '__main__':
     cflib.crtp.init_drivers()
     destination = 9
 
-    a = findLocation(drone1Position)
-    b = findLocation(destination)
-    x = b[0] - a[0]
-    y = b[1] - a[1]
 
-    droneOrder('uri1','foodSearch', x, y)
+    droneOrder('uri1','foodSearch', drone1Position, destination)
     time.sleep(5)
     droneOrder()
     time.sleep(10)
