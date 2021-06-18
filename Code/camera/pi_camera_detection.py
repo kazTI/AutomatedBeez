@@ -1,12 +1,14 @@
-#import lib.services as sv
-#import lib.credentials as cr
+import sys
+sys.path.append('/home/pi/Desktop/onze_git/AutomatedBeez/Code/')
+import lib.services as sv
+import lib.credentials as cr
 import time as tm
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 import cv2
 import numpy as np
-import sys
 import operator
+#print(sys.path)
 
 def generateMask(weak_strength, stronger_strength):
     imagex = cv2.imread("masked_image.jpg")
