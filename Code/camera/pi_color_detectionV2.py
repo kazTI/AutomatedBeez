@@ -17,7 +17,7 @@ def mouseClicked(event, x, y, flags, params):
     if event == cv2.EVENT_LBUTTONDOWN:
         if y > button[0] and y < button[1] and x > button[2] and x < button[3]:   
             # masks.append()
-            generateMask(hsv)
+            # generateMask(hsv)
             print('Butten Clicked !!!')
 
             
@@ -32,7 +32,6 @@ def generateMask(hsv):
     upperLimit = np.uint8([hsv_color[0][0][0]+10,255,255])
     mask = cv2.inRange(hsv, lowerLimit, upperLimit)
     cv2.imshow('Mask', mask)
-
 
 
 
@@ -63,9 +62,11 @@ cv2.imshow('Color Calibration', button_background)
 
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
     image = frame.array
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-
     cv2.imshow("Camera stream", image)
+    
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    generateMask(hsv)
+
 
     rawCapture.truncate(0)
     if cv2.waitKey(1) == 27 & 0xFF == ord('q'):
