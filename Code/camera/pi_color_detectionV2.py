@@ -16,8 +16,8 @@ def nothing(x):
 def mouseClicked(event, x, y, flags, params):
     if event == cv2.EVENT_LBUTTONDOWN:
         if y > button[0] and y < button[1] and x > button[2] and x < button[3]:   
-            masks.append(mask)
-            print(mask)
+            masks.append(green_mask)
+            print(green_mask)
             print(' ')
 
 def generateMask(image):
@@ -119,7 +119,7 @@ button_background[button[0]:button[1],button[2]:button[3]] = 180
 cv2.putText(button_background, 'Next', (100,50), cv2.FONT_HERSHEY_PLAIN, 2, (0), 3)
 cv2.imshow('Color Calibration', button_background)
 
-global mask
+global green_mask
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
     image = frame.array
     green_mask = generateMask(image)
