@@ -57,35 +57,36 @@ def getAvarageCoordinates(mask):
         xval += list_coords[i][0]
         yval += list_coords[i][1]
 
-    xval = xval / len(list_coords)
-    yval = yval / len(list_coords)
+    if list_coords:
+        xval = xval / len(list_coords)
+        yval = yval / len(list_coords)
     return xval, yval
 
 def calculateGridCoordinates(avg_pixel_pos, cells):
-	#deltaX = pixel_bound_x_high - pixel_bound_x_low
-	#gridX = float((avg_pixel_pos[0] - pixel_bound_x_low)) / float((deltaX)) * cells
+	deltaX = pixel_bound_x_high - pixel_bound_x_low
+	gridX = float((avg_pixel_pos[0] - pixel_bound_x_low)) / float((deltaX)) * cells
 
-	#deltaY = pixel_bound_y_high - pixel_bound_y_low
-	#gridY = float((avg_pixel_pos[1] - pixel_bound_y_low)) / float((deltaY)) * cells
+	deltaY = pixel_bound_y_high - pixel_bound_y_low
+	gridY = float((avg_pixel_pos[1] - pixel_bound_y_low)) / float((deltaY)) * cells
 	
-	leftSpanX = pixel_bound_x_high - pixel_bound_x_low
-	rightSpanX = 9 - 0
+	# leftSpanX = pixel_bound_x_high - pixel_bound_x_low
+	# rightSpanX = 9 - 0
 
-	valueScaledX = float(avg_pixel_pos[0] - pixel_bound_x_low) / float(leftSpanX)
+	# valueScaledX = float(avg_pixel_pos[0] - pixel_bound_x_low) / float(leftSpanX)
 
-	converted_x = 0 + (valueScaledX * rightSpanX)
+	# converted_x = 0 + (valueScaledX * rightSpanX)
 
-	leftSpanY = pixel_bound_y_high - pixel_bound_y_low
-	rightSpanY = 9 - 0
+	# leftSpanY = pixel_bound_y_high - pixel_bound_y_low
+	# rightSpanY = 9 - 0
 
-	valueScaledY = float(avg_pixel_pos[1] - pixel_bound_y_low) / float(leftSpanY)
+	# valueScaledY = float(avg_pixel_pos[1] - pixel_bound_y_low) / float(leftSpanY)
 
-	converted_y = 0 + (valueScaledY * rightSpanY)
+	# converted_y = 0 + (valueScaledY * rightSpanY)
 
-	converted_pos = (round(converted_x), round(converted_y))
+	# converted_pos = (round(converted_x), round(converted_y))
 
-	#return (gridX, gridY)
-	return converted_pos
+	return (gridX, gridY)
+	# return converted_pos
 
 
 
@@ -159,7 +160,7 @@ print('    y_range: ', (pixel_bound_y_low, pixel_bound_y_high))
 cells = 10
 # execute main detection
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-    image = image.array
+    image = frame.array
     
     blue_mask = generateMask(image)
     blue_pixel_coordinates = getAvarageCoordinates(blue_mask)
