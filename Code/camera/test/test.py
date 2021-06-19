@@ -33,7 +33,7 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 
 	mask = cv2.inRange(hsv, lowerLimit, upperLimit)
 
-	result = cv2.bitwise_and(image	, image	, mask=mask)
+	result = cv2.bitwise_and(image, image , mask=mask)
 
 	cv2.imshow("frame", image)
 	cv2.imshow("mask", mask)
