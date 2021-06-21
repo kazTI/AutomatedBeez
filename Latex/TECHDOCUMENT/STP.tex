@@ -1,5 +1,13 @@
 \section{Software Test Plan}
+De test plan zal worden opgesplitst in een software-matige kant en een hardware-matige kant. Zo kan voor ieder testomgeving omschreven worden wat er gebeurt binnen de omgeving, en de resultaat van de testen.
 
 \subsection{Software}
+Om de testen op te zetten is het natuurlijk nodig om voor de drones bijbehorende software te maken. Dit betekent dat er een vorm van aansturing moet zijn, oftewel een interface om de drones mee aan te sturen. Deze interface bestuurd de benodigde commandos naar de individuele drones. De server draait een python server om de interface te runnen. Het is mogelijk om dit te doen op een laptop die Windows draait.
+Deze code wordt via python ook verbonden met een MQTT server, die dan verbonden is met een raspberry pi of Windows laptop waar een camera aan hangt. Hierop wordt code uitgevoerd om beeld te verwerken. Dit gebeurt ook in python.
+Ten slotte is er nog een simulatie aanwezig van twee of drie drones die op een scherm afgebeeld worden in WeBots. Dit gebeurt op een Windows laptop die in staat is deze software uit te voeren.
+Alle code is geschreven door de gehele project team.
 
 \subsection{Hardware}
+Voor de hardware wordt er gebruik gemaakt van twee drones van de merk CrazyFlie 2.0. De architectuur van deze drones is te vinden in de documentatie van CrazyFlie. De gehele simulatie zal deze drones aan moeten staan, aangezien dit de visuele indicatie is van de gedrag van bijen.
+De centrale server is een python script die op een Windows pc draait. Deze laptop hoeft niet krachtig te zijn, gezien zijn voornaamste taken locaties ontvangen, omrekenen en commandos versturen naar de drones zijn. Ook deze heeft geen down-time tijdens de simulatie, want anders weet een bij/drone niet wat het moet doen.
+Ten slotte is er een apparaat met een camera nodig. Er zou gekozen kunnen worden voor een raspberry pi met een PiCam v2, maar het werkt net zo goed met een laptop met Windows waar een goedkope webcam aan is gesloten. Daarom is er uiteindelijk gekozen voor een laptop met een webcam. Deze webcam kan fotos en films in full HD maken. Beide de laptop en de webcam zijn constant aan, gezien de drones ten alle tijden zijn locatie moet weten.
