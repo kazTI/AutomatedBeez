@@ -1,4 +1,11 @@
 \section{System/Subsystem Design Description}
+
+\subsection{System wide design decisions}
+In dit hoofdstuk worden, zoals de tital al verraad, de design decisions behandeld. Hieronder vallen bijvoorbeeld 
+input/outputs van het systeem, gedrag keuzes en andere onderdelen die voor het gehele systeem gelden
+
+
+\subsubsection{Camera}
 Aan de camera zit een aantal eisen. Het meest voor de hand liggende eis is dat de resolutie hoog genoeg moet zijn
 om bepaalde objecten te kunnen herkennen. Dit is niet de enige eis, zo moet de camera ook kleur kunnen herkennen 
 en modulair zijn. Deze camera zal aangesloten moeten worden aan een microcontroller 
@@ -7,7 +14,6 @@ om fotos op te vragen, verwerken en berekeningen erop uitvoeren. Ook moet hij ve
 naar een centrale server. Dit betekent dat er een manier moet zijn op de microcontroller om deze data te verzenden.
 Dit zijn de hardware eisen aan de camera kant, als dit allemaal voldaan wordt is het mogelijk om de camera te 
 gebruiken voor de simulatie van bijen.
-
 
 Uit onderzoek is gebleken dat de Picam V2 voldoet aan de eisen die is gesteld bij de SSS. 
 Om deze reden hebben wij voor deze camera gekozen. Elke moderne webcam zou werken maar communicatie met een 
@@ -18,22 +24,56 @@ Vervolgens wordt er gekeken naar de eisen van de Pi, en er is gebleken dat deze 
 De Pi 4 is krachtig genoeg om afbeeldingen te verwerken en heeft een ingebouwde bluetooth module 
 om deze data weer op te sturen naar de server. Dit is dus waarom er gekozen is voor een Raspberry Pi 4.
 
-\subsection{System wide design decisions}
-In dit hoofdstuk worden, zoals de tital al verraad, de design decisions behandeld. Hieronder vallen bijvoorbeeld 
-input/outputs van het systeem, gedrag keuzes en andere onderdelen die voor het gehele systeem gelden
+
+\newpage
+
+\subsubsection{Server}
+Omdat het een gecentraliseert systeem is worden de meeste acties bepaald door een centraal subsysteem, in dit geval is dat de server.
+Vanuit de server worden de drones aantgestuurd en wordt informatie van en naar de simulatie en camera verstuurd. Voor alle communicatie
+wordt een MQTT broker gebruikt. 
+
+\subsubsection*{Gedrag}
+Met gedrag worden de keuzes bedoelt die het systeem maakt, hiermee worden de bsis van het systeem bepaald.
+\begin{enumerate}
+    \item Bij opstart word een drone naar de voedsel bron gestuurd.
+    \item Wanneer de drone deze locatie heeft berijkt zal hij trugkeren naar eht startpunt
+    \item De Drone danst om de locatie te delen met de andere drones
+    \item Meerdere drones worden gestuurd om het voedsel op te halen
+    \item Wanneer het laatste voedsel uit de bron is gehaald en alle drones binnen zijn worden een nieuwe scout gestruurd
+\end{enumerate}
+
+\subsubsection*{Inputs/outputs}
+De server krijgt vanuit meerdere punten informatie binnen en verstuurd het ook naar meerdere subsystemen.
+Deze inputs en outputs worden uitgebreided in het hoofdstuk Interface Design Decisions.
 
 
-\subsubsection*{Camera}
+\begin{description}
+    \item[Input] Camera informatie
+    \item[Input] Simulatie informatie 
+    \item[Output] Drone gedrag
+    \item[Output] Simulatie informatie 
+\end{description}
 
-\subsubsection*{Server}
 
-\subsubsection*{Simulatie}
+\newpage
 
+\subsubsection{Simulatie}
 
 
 
 \subsection{System architectural design}
 
+\subsubsection{System components}
+Hier wordt een opsomming gegeven van alle hardware en software componenten gegeven
 
-\subsubsection*{System components}
+\begin{description}
+    \item[SW] Camera
+    \item[SW] MQTT Broker
+    \item[SW] simulatie
+    \item[SW] Server
+    \item[HW] Picam
+    \item[HW] Crazyflie   
+\end{description}
+
+\subsubsection{System architecture}
 Diagram met hardware en software componenten van het gehelen systeem en de relatie tussen deze onderdelen
