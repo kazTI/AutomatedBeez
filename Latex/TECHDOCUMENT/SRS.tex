@@ -1,11 +1,18 @@
-\section{Software Requirement Spesification}
+\section{Software Requirement Specification}
 
 \subsection{requirements}
+Aan de camera zit een aantal eisen. Het meest voor de hand liggende eis is dat de resolutie hoog genoeg moet zijn
+om bepaalde objecten te kunnen herkennen. Dit is niet de enige eis, zo moet de camera ook kleur kunnen herkennen om objecten van de achtergrond te onderscheiden en modulair zijn. Deze camera zal aangesloten moeten worden aan een microcontroller zodat de fotos die de camera maakt bewerkt kan worden. Dit betekent dat de microcontroller krachtig genoeg moet zijn om fotos op te vragen, verwerken en berekeningen erop uitvoeren. Ook moet hij vervolgens de verwerkte data doorsturen naar een centrale server. Dit betekent dat er een manier moet zijn op de microcontroller om deze data te verzenden.
+Dit zijn de hardware eisen aan de camera kant, als dit allemaal voldaan wordt is het mogelijk om de camera te gebruiken voor de simulatie van bijen.
 
 \subsubsection*{Required states and modes}
+In het geval dat het systeem actief is, is ook de camera en de server actief. Aangezien de drone constant zijn locatie moet weten binnen het systeem, is het niet mogelijk om het gehele systeem idle te maken. Voor de specifieke drone zelf kan het wel een aantal states hebben. Zo kan de drone inactief zijn. Dit wordt shutdown genoemd, en de drone ligt dan op de grond. Het kan actief worden gemaakt, wat start genoemd wordt, en de drone staat dus aan, maar beweegt niet per se. Er is een take off stand, waarbij de drone opstijgt. De drone kan dan idle gemaakt worden, en in de lucht blijven zweven. De drone kan op move worden gezet, en vooruit vliegen. De drone heeft een turn mogelijkheid, waarbij het draait. Voor dit specifiek project is er ook een dance functie nodig, waarbij de drone een beweging maakt dat op een dans lijkt om het gedrag van bijen na te bootsen. En ten slotte kan de drone ook weer dalen, oftewel landing.
 
 \subsubsection*{System internal interface requirements}
 
+
 \subsubsection*{System internal data requirements}
+Er zijn een aantal variabelen die duidelijk gemaakt moeten worden over het systeem. Beginnend bij de camera zal deze objecten herkennen, zoals de drones, etensbronnen en bijenkorf. De locatie van deze objecten zal opgestuurd worden naar de centrale server. De centrale server verwerkt deze lokaal en verstuurt vervolgens data om de drones aan te sturen. Deze data is de states waarin de drone zich in kan bevinden, en zijn dus al benoemd onder "Required states and modes".
 
 \subsubsection*{Design and construction constraints}
+De grootste beperkingen binnen het project is het budget. Ondanks dit is het mogelijk geweest eromheen te werken en een kostenanalyse op te zetten die positief uitkomt. Verdere beperkingen zijn aantal drones die geleverd zijn, oftewel het beschikbare hardware. Hierdoor zou er een mogelijke compromis gesloten moeten worden om een aantal drones te simuleren. Ook is er niet volledige kennis over een systeem als deze voor elke groepslid, waardoor er kennis opgedaan moest worden en uiteindelijk niet genoeg tijd overbleef. De kennis met tijd balans is dus een grote beperking binnen het project.
