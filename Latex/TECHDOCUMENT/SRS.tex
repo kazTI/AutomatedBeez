@@ -1,18 +1,103 @@
 \section{Software Requirement Specification}
+In dit hoofdstuk word een opsomming en uitbreiding gegeven van de systeem requirements. Hieronder vallen onder andere
+de modus/states waarin het systeem zich kan bevinden en de communicatie die plaatsvind om het systeem te laten werken.
 
 \subsection{requirements}
+
+\subsubsection*{Camera}
 Aan de camera zit een aantal eisen. Het meest voor de hand liggende eis is dat de resolutie hoog genoeg moet zijn
-om bepaalde objecten te kunnen herkennen. Dit is niet de enige eis, zo moet de camera ook kleur kunnen herkennen om objecten van de achtergrond te onderscheiden en modulair zijn. Deze camera zal aangesloten moeten worden aan een microcontroller zodat de fotos die de camera maakt bewerkt kan worden. Dit betekent dat de microcontroller krachtig genoeg moet zijn om fotos op te vragen, verwerken en berekeningen erop uitvoeren. Ook moet hij vervolgens de verwerkte data doorsturen naar een centrale server. Dit betekent dat er een manier moet zijn op de microcontroller om deze data te verzenden.
-Dit zijn de hardware eisen aan de camera kant, als dit allemaal voldaan wordt is het mogelijk om de camera te gebruiken voor de simulatie van bijen.
+om bepaalde objecten te kunnen herkennen. Dit is niet de enige eis, zo moet de camera ook kleur kunnen herkennen 
+om objecten van de achtergrond te onderscheiden en modulair zijn. Deze camera zal aangesloten moeten worden aan 
+een microcontroller zodat de fotos die de camera maakt bewerkt kan worden. Dit betekent dat de microcontroller 
+krachtig genoeg moet zijn om fotos op te vragen, verwerken en berekeningen erop uitvoeren. Ook moet hij vervolgens 
+de verwerkte data doorsturen naar een centrale server. Dit betekent dat er een manier moet zijn op de microcontroller 
+om deze data te verzenden. Dit zijn de hardware eisen aan de camera kant, 
+als dit allemaal voldaan wordt is het mogelijk om de camera te gebruiken voor de simulatie van bijen.
 
-\subsubsection*{Required states and modes}
-In het geval dat het systeem actief is, is ook de camera en de server actief. Aangezien de drone constant zijn locatie moet weten binnen het systeem, is het niet mogelijk om het gehele systeem idle te maken. Voor de specifieke drone zelf kan het wel een aantal states hebben. Zo kan de drone inactief zijn. Dit wordt shutdown genoemd, en de drone ligt dan op de grond. Het kan actief worden gemaakt, wat start genoemd wordt, en de drone staat dus aan, maar beweegt niet per se. Er is een take off stand, waarbij de drone opstijgt. De drone kan dan idle gemaakt worden, en in de lucht blijven zweven. De drone kan op move worden gezet, en vooruit vliegen. De drone heeft een turn mogelijkheid, waarbij het draait. Voor dit specifiek project is er ook een dance functie nodig, waarbij de drone een beweging maakt dat op een dans lijkt om het gedrag van bijen na te bootsen. En ten slotte kan de drone ook weer dalen, oftewel landing.
+\subsubsection*{Server}
+De server dient als het middelpunt van het gehele systeem, hierdoor zijn er hoop requirements die hieraan gebonden zijn.
+Allereest zijn er twee interfaces waarvan de server gebruikt maakt om de communicatie in het systeem te regelen.
+Voor het communiceren tussen de componenten van het systeem, de simulatie en de camera, wordt er gebruik gemaakt van een
+MQTT broker. Hiermee kunnen verschillende soorten berichten verzonden worden binnen het systeem en de juiste ontvanger kan
+op deze berichten subscriben om de relevante informatie te ontvangen. Voor de server geldt het dat deze zowel verstuurd als ontvangt.
+Hier zal verder op worden ingegaan in de interface paragraven van dit hoofstuk. Verder regelt de server ook alle communicatie 
+naar de drones toe, ook hierop zal later uitgebreider worden ingegaan. Om de drones verschillend gedrag te laten uitvoeren 
+voor de verschillende situaties die zich kunnen voordoen, wordt er gebruik gemaakt van verschillende modes waar deze drones zich in kunnen bevinden. 
+Deze modes worden behandels in de paragraaf required stats and modes.
 
-\subsubsection*{System internal interface requirements}
+\subsubsection*{Simulatie}
+De simulatie is voor een deel een reflectie van de server, doordat deze ook de drones aanstuurd. Het processen van de data gebeurt op de server,
+maar de commandos worden vervolgens via MQTT doorgestuurd en uitgevoerd door de simulatie. Deze relatie word verder op in gegaan in internal interfaces.
+Verder heeft de simulatie eigen statussen die hij bijhoud die niet nodig zijn voor de hardware drone besturing om bij te houden. 
+ 
 
 
-\subsubsection*{System internal data requirements}
-Er zijn een aantal variabelen die duidelijk gemaakt moeten worden over het systeem. Beginnend bij de camera zal deze objecten herkennen, zoals de drones, etensbronnen en bijenkorf. De locatie van deze objecten zal opgestuurd worden naar de centrale server. De centrale server verwerkt deze lokaal en verstuurt vervolgens data om de drones aan te sturen. Deze data is de states waarin de drone zich in kan bevinden, en zijn dus al benoemd onder "Required states and modes".
 
-\subsubsection*{Design and construction constraints}
-De grootste beperkingen binnen het project is het budget. Ondanks dit is het mogelijk geweest eromheen te werken en een kostenanalyse op te zetten die positief uitkomt. Verdere beperkingen zijn aantal drones die geleverd zijn, oftewel het beschikbare hardware. Hierdoor zou er een mogelijke compromis gesloten moeten worden om een aantal drones te simuleren. Ook is er niet volledige kennis over een systeem als deze voor elke groepslid, waardoor er kennis opgedaan moest worden en uiteindelijk niet genoeg tijd overbleef. De kennis met tijd balans is dus een grote beperking binnen het project.
+\subsection{Required states and modes}
+
+\subsubsection*{Camera}
+In het geval dat het systeem actief is, is ook de camera en de server actief.
+Aangezien de drone constant zijn locatie moet weten binnen het systeem, is het niet mogelijk om het gehele systeem 
+idle te maken. Er is alleen een verschil tussen de berichten die worden verstuurd direct na de opstard en de berichten daarna.
+Allereerst word er namelijk de dimensies van de grid gestuurd en de locatie van de voedselbronnen. 
+Alle berichten hierna zijn de locatie van de drones en de objecten daaromheen.
+
+\subsubsection*{Server}
+Zoals eerder genoemd in de requirements, maakt de server gebruik van modes om de drones hun gedrag te laten uiten.
+De verschillende modes waarin de drone zich kan bevinden zijn, waiting, scouten, dansen en gatheren. 
+
+\begin{description}
+    \item[Waiting]
+    Een wachtende drone kan naar de scout status worden veranderd, wanneer hier nog geen andere drone mee bezig is.
+    Als er al een drone aan het scouten is dan zullen de andere drones wachten totdat deze drone aankomt om de locatie
+    door te geven, aangegeven door te dansen. 
+    
+    \item[Scouten]
+    Een scoutende bij gaat opziek naar een voedselbron. Omdat er gewerkt wordt met object detectie
+    is er voor gekozen om de drone direct naar de bron te laten vliegen. Er is geen meerwaarde in het rond laten 
+    vliegen van de drone wanneer het vinden van het doel al gebeurt is voor de vlucht. 
+    Bij het scouten wordt er door de drone naar het einddoel gevlogen en weer terug om de locatie door te geven in de volgende modus.
+    
+    \item[Dansen]
+    Wanneer de drone terug bij de hive is zal hij een dans uitvoeren, waarmee de bijen normaal gesproken 
+    de locatie en potentie van de voedselbron door communiceren. Door dit te doen worden de andere bijen naar de gather modus gezet
+    en wordt de locatie doorgegeven
+    
+    \item[gatheren]  
+    Wanneer de drones aan het gatheren zijn, zijn ze naar de voedselbron aan het vliegen totdat deze leeg en terug naar
+    de korf totdat de voedselbron leeg is. Wanneer de het laatste voedsel uit de bron is gehaald, 
+    worden de drones opnieuw in waiting gezet.
+\end{description}
+
+\subsubsection*{Simulatie}
+De simulatie krijgt zijn commandos binnen nadat deze zijn uitgevogled door de server. Om deze reden maakt de simulatie geen gebruik van eigen modus, 
+maar deelt hij deze met die van de server. Om deze reden kan er voor de modus naar de server modus gekeken worden, 
+om te achterhalen wat de drones hun modus is binnen de simulatie. wel worden er statussen bij de gisimuleerde drones gebruikt om de huidige status van
+de drone bij te houden. Deze statussen zijn takeoff, moving, landing en of de drone aan staat of niet.
+
+
+\subsection{System internal interface requirements}
+
+\subsubsection*{Camera}
+De camera communiceerd door middel van een MQTT broker, hier worden meerdere dingen door naar buiten gecommuniceerd.
+Allereest wanneer het systeem opstart worden de buitenste rand en de etens objecten verstuurd naar de server. zodat deze regegistreerd kunnen worden.
+Tijdens het draaien van het systeem worden coordinaten van de objecten om een drone heen verstuurd samen met zijn eigen locatie. 
+Hiermee kan de drone zorgen dat deze de obstakels om zich heen ontweikt.
+
+\subsubsection*{Server}
+De server ontvangt de gegenereerde data van de camera doormiddel van de MQTT broker, vervolgens wordt deze informatie doorgegeven aan de relevante drones.
+Een combinatie van informatie en commandos door naar de draaiende simulatie gestuurd via de MQTT, zodat de simulatie ook weet waar de objecten zijn en heen moeten.
+Hiernaast worden de drones ook aangestuurd door de server, hiervoor wordt de 2.4Ghz radio antenne gebruikt.
+
+\subsubsection*{Simulatie}
+Net als de server moet de simulatie vliegen van drones regelen, communicatie voor de locatie van deze objecten gaat om deze reden ook hetzelfde.
+De simulatie ontvangt commandos die de drones moeten uitvoeren  en informatie van van waar de objecten zich bevinden via de MQTT.
+
+
+\subsection{Design and construction constraints}
+De grootste beperkingen binnen het project is het budget. Ondanks dit is het mogelijk geweest eromheen te 
+werken en een kostenanalyse op te zetten die positief uitkomt. Verdere beperkingen zijn aantal drones die geleverd zijn, 
+oftewel het beschikbare hardware. Hierdoor zou er een mogelijke compromis gesloten moeten worden om een aantal drones 
+te simuleren. Ook is er niet volledige kennis over een systeem als deze voor elke groepslid, 
+waardoor er kennis opgedaan moest worden en uiteindelijk niet genoeg tijd overbleef. 
+De kennis met tijd balans is dus een grote beperking binnen het project.
