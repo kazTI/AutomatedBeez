@@ -1,14 +1,12 @@
 import json
 import paho.mqtt.client as mqtt
+import time as tm
 
 class PositionHandler:
-    def __init__(self, position, offset):
-        self.offset = offset
-        self.start_position = [sum(x) for x in zip(position, offset)]
-
-    def generateAbsoluteGrid(self, length, tile_size):
-        self.length = length
-        self.tile_size = tile_size
+    grid_length = 3         # meters
+    grid_tile_size = 0.1    # meters
+    offset = [0.05, 0.005, 0.05]
+    def __init__(self, offset, length, tile_size):
         self.absolute_grid = int (length / tile_size)
 
     def getDestCoordX(self, x):
@@ -61,10 +59,14 @@ class MqttClient:
 
             # create new thread to process network traffic
             self.client.loop_start()
+            # tm.sleep(5)
             
             print(f'[{self.name}] Connection established.')
         except:
             print(f'[{self.name}] Connection failed, retrying...')
+
+    # def loopConnection(self):
+    #     self.client.loop()
 
     # method which stops all initialized object to properly close the MqttClient connection
     def stopConnection(self):
@@ -74,7 +76,7 @@ class MqttClient:
         
     # method which publishes a created message to Mqtt Broker
     def sendPublish(self, topic, message, qos):
-        print('The following message is sent :', '(topic: '+topic+', message: '+str(message)+', qos: '+str(qos)+')')
+        # print('The following message is sent :', '(topic: '+topic+', message: '+str(message)+', qos: '+str(qos)+')')
         self.client.publish(topic, json.dumps(message), qos)
 
     # callback method which is used on connect to subscribed to perticular channels found within this method
@@ -82,7 +84,7 @@ class MqttClient:
         errorMessage = f'[{self.name}] Connection refused'
         if connectionResult == 0:
             for topic in self.assigned_topics:
-                self.client.subscribe(topic, 2)
+                self.client.subscribe(topic, 0)
         elif connectionResult == 1:
             print(errorMessage, 'incorrect protocol version')
         elif connectionResult == 2:
@@ -97,12 +99,11 @@ class MqttClient:
     # this method triggers an event when a message is received
     def on_message(self, client, userdata, message):
         # messages are received as MQTTMessage object
-        print('message received')
         topic = message.topic
         message = str(message.payload.decode('utf-8'))
         message = json.loads(message)
-        self.messages.append(message)
-        self.sendPublish(self.name + '_response', 'ack', 2) ##
+        # print(f'[{self.name}] message received: ', topic, message)
+        self.messages.append((topic, message))
 
 if __name__ == '__main__':
     x = 1
