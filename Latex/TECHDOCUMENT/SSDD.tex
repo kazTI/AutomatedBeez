@@ -42,9 +42,6 @@ Deze inputs en outputs worden uitgebreided in het hoofdstuk Interface Design Dec
     \item[Output] Simulatie informatie
 \end{description}
 
-
-\newpage
-
 \subsubsection{Simulatie}
 De simulatie is een eenvoudig manier om een overzicht te krijgen over het gehele project. Dit komt omdat het net als met de echte server en drone, samenhangt met de rest van het geheel. Zo neemt de simulatie als input de coordinaten van de drones. Net als de echte server verwerkt de simulatie de coordinaten om uiteindelijk als output signalen door te geven aan de gesimuleerde drones. Deze signalen zijn de commandos die de drones uit moeten voeren. Dit gebeurt allemaal op een hoge snelheid gezien de simulatie op een sterke Windows laptop afgebeeld wordt. De limiet hieraan is dus de snelheid van de ingekomen locatie data. Om deze data veilig te ontvangen wordt er een MQTT server gebruikt die vergrendeld is met inloggegevens. Gezien de simulatie zelf lokaal op een PC is, zijn hier verder geen beveiligingsrisicos aan gekoppeld. Omdat het een simulatie is, wordt er een groot belang gehecht aan toegankelijkheid van data. De beste, en soms wel enige, manier om een simulatie te testen is door gebruik te maken van verschillende variabelen en states waar een simulatie zich in kan bevinden. Zo kan een simulatie gebruikt worden om een zo realistisch mogelijk gesimuleerde omgeving weer te geven.
 
