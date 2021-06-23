@@ -1,7 +1,7 @@
 import sys
 sys.path.append('C:\\Users\\Robert\\Desktop\\TINLabs AS\\Code')
-import lib.services as sv
-import lib.credentials as cr
+#import lib.services as sv
+#import lib.credentials as cr
 
 import logging
 import time
@@ -93,7 +93,8 @@ def activate_mellinger_controller(scf, use_mellinger):
     scf.cf.param.set_value('stabilizer.controller', controller)
 
 class DroneInterface:
-    def __init__(self, name, uri, position, destination):
+    def __init__(self, name, URI, bussy, working, counter):
+        cflib.crtp.init_drivers()
         # self.name_dict = {'drone_1':'controller_1',
         #                   'drone_2':'controller_2',
         #                   'drone_3':'controller_3'
@@ -110,10 +111,30 @@ class DroneInterface:
         # self.mqttClient.startConnection()
         
         # self.drone_states = ['on', 'takeoff', 'moving', 'dancing', 'landing', 'off']
-        self.URI = uri_helper.uri_from_env(default=uri)
-        self.position = position
-        self.destination = destination
-        self.drone_busy = False
+        self.name = name
+        self.URI = URI
+        self.drone_busy = bussy
+        self.drone_working = working
+        self.drone_work_counter = counter
+
+
+    def setCounter(self, counter):
+        self.drone_work_counter = counter
+    
+    def getCounter(self):
+        return self.drone_work_counter
+
+    def setBussy(self, busy):
+        self.drone_busy = busy
+    
+    def getBussy(self):
+        return self.drone_busy
+
+    def setWorking(self, working):
+        self.drone_working = working
+    
+    def getWorking(self):
+        return self.drone_working
 
     def createMessage(self, state, nextPosition):
         message =   {
@@ -122,38 +143,37 @@ class DroneInterface:
                     }
         return message
 
-    def droneTakeoff(self, URI):
-        with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
+    def droneTakeoff(self):
+        print(self.URI)
+        printThing = type(self.URI)
+        print(printThing)
+        with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as scf:
             activate_high_level_commander(scf)
             reset_estimator(scf)
             activate_mellinger_controller(scf, False)
             commander = scf.cf.high_level_commander
-            commander.takeoff(DEFAULT_HEIGHT, flightTime)
+            commander.takeoff(DEFAULT_HEIGHT, 1)
             time.sleep(flightTime)
 
-    def droneMove(self, URI, position, destination):
+    def droneMove(self, position, destination):
         x = destination[0] - position[0]
         y = destination[1] - position[1]
-        with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
-            activate_high_level_commander(scf)
-            reset_estimator(scf)
+        with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as scf:
             activate_mellinger_controller(scf, False)
             commander = scf.cf.high_level_commander
             commander.go_to(x, y, 0, 0, flightTime, relative=True)
             time.sleep(flightTime)
 
-    def droneDance(self, URI):
-        with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
+    def droneDance(self):
+        with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as scf:
             with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
                 mc.turn_left(360)
                 time.sleep(1)
                 mc.turn_right(360)
                 time.sleep(1)
 
-    def droneLand(self, URI):
-        with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
-            activate_high_level_commander(scf)
-            reset_estimator(scf)
+    def droneLand(self):
+        with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as scf:
             activate_mellinger_controller(scf, False)
             commander = scf.cf.high_level_commander
             commander.land(0.0, flightTime)
