@@ -6,28 +6,28 @@ class PositionHandler:
     grid_length = 3         # meters
     grid_tile_size = 0.1    # meters
     offset = [0.05, 0.005, 0.05]
-    def __init__(self, offset, length, tile_size):
-        self.absolute_grid = int (length / tile_size)
+    def __init__(self):
+        self.grid_cells = int (self.grid_length / self.grid_tile_size)
 
     def getDestCoordX(self, x):
-        if x > self.absolute_grid-1 or x < 0:
-            raise Exception(f'Please assign grid value from the following range [0 - {self.absolute_grid-1}]')
+        if x > self.grid_cells-1 or x < 0:
+            raise Exception(f'Please assign grid value from the following range [0 - {self.grid_cells-1}]')
         else:
-            dest_coord_x = x * self.length / self.absolute_grid + self.offset[0]
+            dest_coord_x = x * self.grid_length / self.grid_cells + self.offset[0]
             return dest_coord_x
 
     def getDestCoordZ(self, z):
-        if z > self.absolute_grid-1 or z < 0:
-            raise Exception(f'Please assign grid value from the following range [0 - {self.absolute_grid-1}]')
+        if z > self.grid_cells-1 or z < 0:
+            raise Exception(f'Please assign grid value from the following range [0 - {self.grid_cells-1}]')
         else:
-            dest_coord_z = z * self.length / self.absolute_grid + self.offset[0]
+            dest_coord_z = z * self.grid_length / self.grid_cells + self.offset[0]
             return dest_coord_z
 
     def getAbsoluteCoordX(self, x):
-        return int(self.absolute_grid * ((x - self.offset[0]) / self.length))
+        return int(self.grid_cells * ((x - self.offset[0]) / self.grid_length))
 
     def getAbsoluteCoordZ(self, z):
-        return int(self.absolute_grid * ((z - self.offset[2]) / self.length))
+        return int(self.grid_cells * ((z - self.offset[2]) / self.grid_length))
 
 class MqttClient:
     # initialize MqttClient for communication with Mqtt broker

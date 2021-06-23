@@ -19,12 +19,14 @@ class PathGenerator:
             node.walkable = True
 
     def generateAStarPath(self, start, end):
+        # print(start, end)
         start = self.grid.node(start[0], start[1])
         end = self.grid.node(end[0], end[1])
         pathfinder = AStarFinder(diagonal_movement=DiagonalMovement.never)
         path, _ = pathfinder.find_path(start, end, self.grid)
-        # self.printPath(start, end, path)
-        return start, end, path
+        path.pop(0)
+        self.grid.cleanup()
+        return start, end, path[0]
 
     def printPath(self, path=None, start=None, end=None, start_chr='S', end_chr='X', path_chr='x', empty_chr=' ', show_weight=False):
         print(self.grid.grid_str(path=path, start=start, end=end, start_chr='S', end_chr='X', path_chr='x', empty_chr=' ', show_weight=False))

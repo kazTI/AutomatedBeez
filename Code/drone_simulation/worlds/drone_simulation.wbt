@@ -5,8 +5,8 @@ WorldInfo {
   coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation 0.8903937596369614 -0.4300304655407678 -0.14924058263872902 5.752660325641024
-  position 1.7260697740381943 1.5060438032749326 3.232988622201658
+  orientation 0.9447795724925997 -0.3038852732585432 -0.12265928459469012 5.760026994426786
+  position 2.082466579683445 2.047819355682103 5.485139959902532
 }
 TexturedBackground {
 }
@@ -132,18 +132,18 @@ Robot {
       ]
     }
   ]
-  name "drone1"
+  name "drone0"
   boundingObject USE BODY
-  controller "drone1_controller"
+  controller "drone0_controllerV2"
   supervisor TRUE
 }
 drone {
   position 1.85 0.005 2.65
-  controller "drone2_controller"
+  controller "drone1_controllerV2"
 }
 drone {
   position 1.65 0.005 2.45
-  controller "drone3_controller"
+  controller "drone2_controllerV2"
 }
 Solid {
   translation 1.85 0 2.45

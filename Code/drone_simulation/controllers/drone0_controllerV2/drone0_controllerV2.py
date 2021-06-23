@@ -30,7 +30,7 @@ mqttClient.startConnection()
 received_message_count = 0
 sent_message_count = 0
 time_passed = 0
-response_time = 1000 #ms
+response_time = 200 #ms
 
 # variable used for processing a single path step
 command = ''
@@ -53,7 +53,9 @@ while drone.step(timestep) != -1:
     # if there are messages process them
     if not len(mqttClient.messages) <= 0:
         message = mqttClient.messages.pop(0)
-        _, (command, start_position) = message
+        (_, message) = message
+        command = message['command']
+        start_position = message['position']
         mqttClient.messages = []
         print('Received message: ', message)
         # process the command for the movement of the drone

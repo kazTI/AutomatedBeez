@@ -9,7 +9,7 @@ import drone_simulation.controllers.movement_interface.movement_controllerV2 as 
 # initiate the Supervisor and handler for movement of the drone.
 drone = Supervisor()
 drone_node = drone.getSelf()
-translation_handler = drone_node.getField("translation")
+translation_handler = drone_node.getField("position")
 
 
 # get the time step of the current world.
@@ -55,9 +55,10 @@ while drone.step(timestep) != -1:
         message = mqttClient.messages.pop(0)
         _, (command, start_position) = message
         mqttClient.messages = []
-        print('Received message: ', message)
+        # print('Received message: ', message)
         # process the command for the movement of the drone
-    
+
+
     if command == 'start':
         movement_controller.start([start_position[0], 0.005, start_position[2]])
     else:
