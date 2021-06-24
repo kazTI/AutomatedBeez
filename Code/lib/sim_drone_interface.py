@@ -3,7 +3,7 @@ sys.path.append('C:\\Users\\Robert\\Desktop\\TINLabs AS\\Code')
 import lib.services as sv
 import lib.credentials as cr
 
-class DroneInterface:
+class SimDroneInterface:
     def __init__(self, name):
         # drone name
         self.name_dict = {
@@ -24,6 +24,7 @@ class DroneInterface:
                                 6 : 'move_left',
                                 7 : 'move_right',
                               }
+        self.scout = False
 
         # drone variables
         self.drone_start_position = None

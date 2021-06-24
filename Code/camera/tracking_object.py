@@ -61,7 +61,7 @@ def createMessage(drone1_position=None, drone2_position=None):
 
 global click
 click = 0
-cells = 2
+cells = 5
 
 pixel_bound_x_low = 0
 pixel_bound_x_high = 0
@@ -140,16 +140,16 @@ while True:
     time_passed += time - old_time
     if time_passed > response_time:
         print('Pixel Coords Drone 1: ', (x1, y1))
-        x1, y1 = calculateGridCoordinates((x1, y1), 2)
+        x1, y1 = calculateGridCoordinates((x1, y1), cells)
         print('Grid Coords Drone 1: ', (x1, y1))
 
         if second_drone:
             print('Pixel Coords Drone 2: ', (x2, y2))
-            x2, y2 = calculateGridCoordinates((x2, y2), 2)
+            x2, y2 = calculateGridCoordinates((x2, y2), cells)
             print('Grid Coords Drone 2: ', (x2, y2))
 
-        message = createMessage((x1, y1), (None, None))
-        mqttClient.sendPublish('swarm', message, 0)
+        message = createMessage([x1, y1])
+        mqttClient.sendPublish('drone_3', message, 0)
         
         time_passed = 0
 
