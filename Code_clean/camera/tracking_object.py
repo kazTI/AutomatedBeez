@@ -13,30 +13,48 @@ def click_event(event, x, y, flags, image):
     global pixel_bound_x_high
     global pixel_bound_y_low
     global pixel_bound_y_high
+    global food_location
+    global food_location_in_pixel
     if event == cv2.EVENT_LBUTTONDOWN:
         global click
         if click == 0:
             text = f'Pixel_bound_x_low: {x}'
             pixel_bound_x_low = x
+            cv2.circle(image, (x, y), 5, (255, 255, 255), -1)
+            cv2.putText(image, text, (x-60, y-20),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.4, (0, 255, 0), 1)
         elif click == 1:
             text = f'Pixel_bound_x_high: {x}'
             pixel_bound_x_high = x
+            cv2.circle(image, (x, y), 5, (255, 255, 255), -1)
+            cv2.putText(image, text, (x-60, y-20),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.4, (0, 255, 0), 1)
         elif click == 2:
             text = f'Pixel_bound_y_low: {y}'
             pixel_bound_y_low = y
+            cv2.circle(image, (x, y), 5, (255, 255, 255), -1)
+            cv2.putText(image, text, (x-60, y-20),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.4, (0, 255, 0), 1)
         elif click == 3:
             text = f'Pixel_bound_y_high: {y}'
             pixel_bound_y_high = y
+            cv2.circle(image, (x, y), 5, (255, 255, 255), -1)
+            cv2.putText(image, text, (x-60, y-20),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.4, (0, 255, 0), 1)
+        elif click == 4:
+            food_location_in_pixel = (x, y)
+            cv2.circle(image, food_location_in_pixel, 50, (0, 0, 255), 2, cv2.LINE_4)
+            food_location = calculateGridCoordinates(food_location_in_pixel, cells)
         
-        cv2.circle(image, (x, y), 5, (255, 255, 255), -1)
-        cv2.putText(image, text, (x-60, y-20),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.4, (0, 255, 0), 1)
+        cv2.imshow('Configuration', image)
         click += 1
-        print(text)
-        cv2.imshow('Define x1, x2, y1, y2', image)
-        if click == 4:
-            cv2.destroyWindow('Define x1, x2, y1, y2')
+    elif event == cv2.EVENT_RBUTTONDOWN:
+        cv2.destroyWindow('Configuration')
+
 
 def drawBox(image, bbox, color):
     x, y, w, h = int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3])
@@ -64,12 +82,13 @@ def createMessage(drone1_position=None, drone2_position=None):
 
 global click
 click = 0
-cells = 5
-
+cells = 8
 pixel_bound_x_low = 0
 pixel_bound_x_high = 0
 pixel_bound_y_low = 0
 pixel_bound_y_high = 0
+
+food_location = []
 
 second_drone = False
 
@@ -80,8 +99,8 @@ cap.set(3, width)
 cap.set(4, height)
 success, image = cap.read()
 
-cv2.imshow('Define x1, x2, y1, y2', image)
-cv2.setMouseCallback('Define x1, x2, y1, y2', click_event, image)
+cv2.imshow('Configuration', image)
+cv2.setMouseCallback('Configuration', click_event, image)
 
 # tracker = cv2.TrackerMOSSE_create()
 tracker = cv2.TrackerCSRT_create()
@@ -136,15 +155,21 @@ while True:
 
     fps = cv2.getTickFrequency() / (cv2.getTickCount() - timer)
     cv2.putText(image, str(int(fps)), (10, 30), cv2.FONT_HERSHEY_DUPLEX, 0.6, (0, 0, 255), 1)
+    cv2.circle(image, food_location_in_pixel, 50, (0, 0, 255), 2, cv2.LINE_4)
     cv2.imshow('Life View', image)
 
+    # this code is for sending the calculated grid coordinates to the server
     old_time = time
     time = tm.time()
     time_passed += time - old_time
     if time_passed > response_time:
-        print('Pixel Coords Drone 1: ', (x1, y1))
+        print('Coordinates:')
+        print('    - pixel coords drone 1: ', (x1, y1))
         x1, y1 = calculateGridCoordinates((x1, y1), cells)
-        print('Grid Coords Drone 1: ', (x1, y1))
+        print('    - grid coords drone 1: ', (x1, y1))
+
+        print('Food Location:')
+        print('    - grid coords: ', food_location)
 
         if second_drone:
             print('Pixel Coords Drone 2: ', (x2, y2))
@@ -155,6 +180,7 @@ while True:
         mqttClient.sendPublish('drone_3', message, 0)
         
         time_passed = 0
+        print(' ')
 
     if cv2.waitKey(1) == 27:
         break
