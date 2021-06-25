@@ -3,7 +3,7 @@ import os
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
-from lib import services as sv
+from lib import drone_interface, services as sv
 from lib import credentials as cr
 from lib import path_generator as pg
 from lib import timer as tm
@@ -116,7 +116,7 @@ while running:
             interface = rd.choice(drone_interfaces)
             assigned_scout = True
 
-        if message and assigned_scout:
+        if message and assigned_scout and not food_found:
             if interface.drone_state == 'available':
                 print('takeoff')
                 interface.takeoff()
@@ -132,7 +132,7 @@ while running:
                     else:
                         interface.stop()
             elif isinstance(interface, di.DroneInterface):
-                if interface.drone_state == 'scouting' and not interface.takingoff:
+                if interface.drone_state == 'scouting' and not interface.bussy:
                     if interface.drone_current_position != food_position:
                         _, _, next_position = path_generator.generateAStarPath(interface.drone_current_position, food_position)
                         interface.droneMove(next_position)
@@ -142,9 +142,9 @@ while running:
                 elif interface.drone_state == 'returning' and not interface.flying:
                     interface.takeoff()
                 elif interface.drone_state == 'returning' and interface.flying:
-                    if interface.drone_current_position != interface.drone_start_position and not interface.takingoff:
+                    if interface.drone_current_position != interface.drone_start_position and not interface.bussy:
                         print('here now ', interface.drone_start_position)
-                        _, _, next_position = path_generator.generateAStarPath(interface.drone_current_position, [0,0])
+                        _, _, next_position = path_generator.generateAStarPath(interface.drone_current_position, interface.drone_start_position)
                         interface.droneMove(next_position)
                     elif interface.drone_current_position == interface.drone_start_position:
                         interface.droneDance()
