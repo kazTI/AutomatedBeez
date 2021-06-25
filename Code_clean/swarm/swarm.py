@@ -38,7 +38,6 @@ def getCurrentPosition(interface):
             ready = True
         interface.mqttClient.messages = []
 
-
 def executeSimDroneMovement(interface, current_position, next_position):
     # fix this when values are higher then normal
     pos = (next_position[0] - current_position[0], next_position[1] - current_position[1])
@@ -53,6 +52,12 @@ def executeSimDroneMovement(interface, current_position, next_position):
         interface.move_forward()
     else:
         interface.stop()
+
+def gatherFood(interface):
+    if isinstance(interface, sdi.SimDroneInterface):
+        pass
+    elif isinstance(interface, di.DroneInterface):
+        pass
 
 
 # initialize drone interfaces and assign start positions for the simulated drones
@@ -80,11 +85,20 @@ commands = [('start', [0.05, 0.005, 0.05]), ('move_right', None), ('move_backwar
 initialized = False
 assigned_scout = False
 food_found = False
+food_gathering = False
 food_position = [4, 4]
 
-
+# this time is used for main/swarm execution
 time_passed = 0
 response_time = 0.2 #s
+
+
+# this time is used for delay between started threads for gather of food
+gathering_delay = 2
+gathering_time = 0
+index = 0
+
+
 timer = tm.Timer()
 running = True
 while running:
@@ -110,7 +124,6 @@ while running:
                         interface.drone_start_position = interface.drone_current_position
                         print('drone start position is: ', interface.drone_start_position)
                         initialized = True
-                    
 
         if not assigned_scout and initialized and not food_found:
             interface = rd.choice(drone_interfaces)
@@ -151,5 +164,19 @@ while running:
                         interface.droneLand()
                         interface.drone_state = 'available'
                         food_found = True
+
+        if food_found and initialized and not food_gathering:
+            gathering_time += timer.tick()
+            if gathering_time > gathering_delay:
+                interface = drone_interfaces[index]
+                interface_thread = td.Thread(target=gatherFood, args=[interface])
+                interface_thread.start()
+                index += 1
+                gathering_time = 0
+                
+                if index == len(drone_interfaces-1):
+                    food_gathering = True
+                    index = 0
+
 
         time_passed = 0
