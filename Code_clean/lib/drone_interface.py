@@ -1,6 +1,7 @@
 import sys
 import lib.services as sv
 import lib.credentials as cr
+import math
 
 import logging
 import time
@@ -93,7 +94,7 @@ class DroneInterface:
         self.drone_states = ['available', 'idle', 'scouting', 'returning' 'dancing', 'gathering']
         self.drone_state = self.drone_states[0]
         self.scout = False
-        self.takingoff = False
+        self.bussy = False
         self.flying = False
 
         self.clientName = name
@@ -112,14 +113,14 @@ class DroneInterface:
 
     def takeoff(self):
         with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as scf:
-            self.takingoff = True
+            self.bussy = True
             self.periferal.activate_high_level_commander(scf)
             self.periferal.reset_estimator(scf)
             self.periferal.activate_mellinger_controller(scf, False)
             commander = scf.cf.high_level_commander
             commander.takeoff(DroneInterface.DEFAULT_HEIGHT, 1.5)
             time.sleep(DroneInterface.flightTime)
-            self.takingoff = False
+            self.bussy = False
             self.flying = True
 
     def droneMove(self, destination):
@@ -130,16 +131,22 @@ class DroneInterface:
             commander = scf.cf.high_level_commander
             commander.go_to(x, y, 0, 0, DroneInterface.flightTime, relative=True)
             time.sleep(0.2)
-            # self.drone_state = 'idle'
 
     def droneDance(self):
         with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as scf:
-            with MotionCommander(scf, default_height=DroneInterface.DEFAULT_HEIGHT) as mc:
-                self.drone_state = 'dance'
-                mc.turn_left(360)
-                time.sleep(1)
-                mc.turn_right(360)
-                time.sleep(1)
+            self.bussy = True
+            self.periferal.activate_mellinger_controller(scf, False)
+            commander = scf.cf.high_level_commander
+            commander.go_to(0, 0, 0, 2*math.pi, 3*DroneInterface.flightTime, relative=True)
+            time.sleep(3*DroneInterface.flightTime)
+            commander.go_to(0, 0, 0, -2*math.pi, 3*DroneInterface.flightTime, relative=True)
+            time.sleep(3*DroneInterface.flightTime)
+            if self.drone_start_position != self.drone_current_position:
+                x = (self.drone_start_position[0] - self.drone_current_position[0]) / self.cells / 2
+                y = - (self.drone_start_position[1] - self.drone_current_position[1]) / self.cells / 2
+                commander.go_to(x, y, 0, 0, DroneInterface.flightTime, relative=True)
+                time.sleep(DroneInterface.flightTime)
+            self.bussy = False
 
     def droneLand(self):
         with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as scf:
