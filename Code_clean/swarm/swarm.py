@@ -57,7 +57,32 @@ def gatherFood(interface):
     if isinstance(interface, sdi.SimDroneInterface):
         pass
     elif isinstance(interface, di.DroneInterface):
-        pass
+        interface.drone_state = 'gathering'
+        interface.takeoff()
+        loop = True
+        command_time = 0
+        command_delay = 2
+        while loop:
+            command_time += timer.tick()
+            if command_time > command_delay:
+                if interface.drone_current_position != food_position and interface.drone_state == 'gathering':
+                    _, _, next_position = path_generator.generateAStarPath(interface.drone_current_position, food_position)
+                    interface.droneMove(next_position)
+                elif interface.drone_current_position == food_position:
+                    interface.droneLand()
+                    interface.drone_state = 'returning'
+
+                elif interface.drone_state == 'returning' and not interface.flying:
+                    interface.takeoff()
+                elif interface.drone_state == 'returning' and interface.flying:
+                    if interface.drone_current_position != interface.drone_start_position and not interface.bussy:
+                        _, _, next_position = path_generator.generateAStarPath(interface.drone_current_position, interface.drone_start_position)
+                        interface.droneMove(next_position)
+                    elif interface.drone_current_position == interface.drone_start_position:
+                        interface.droneLand()
+                        interface.drone_state = 'available'
+                        loop = False
+                command_time = 0
 
 
 # initialize drone interfaces and assign start positions for the simulated drones
