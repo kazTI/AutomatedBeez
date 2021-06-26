@@ -12,4 +12,5 @@
 Code/swarm/main/__pycache__
 Code/lib/__pycache__
 Code/lib/credentials.py
-Code/drone_simulation/controllers/__pycache__
+*__pycache__
+Code_clean/cflib

@@ -3,10 +3,6 @@ import lib.services as sv
 import lib.credentials as cr
 import math
 import os
-currentdir = os.path.dirname(os.path.realpath(__file__))
-parentdir = os.path.dirname(currentdir)
-sys.path.append(parentdir)
-from camera import tracking_object
 import logging
 import time
 
@@ -89,7 +85,7 @@ class DroneInterface:
         cflib.crtp.init_drivers()
         self.URI = URI
         self.periferal = Periferal(self.URI)
-        self.cells = tracking_object.cells
+        self.cells = 8
 
         self.drone_start_position = []
         self.drone_current_position = []
