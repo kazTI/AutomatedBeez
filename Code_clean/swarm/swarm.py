@@ -18,10 +18,10 @@ global ready
 ready = False
 
 
-drone_subscribe_topics = ['food',]
+
 credentials = cr.getCredentials()
 mqttClient = sv.MqttClient(credentials[0], credentials[1], credentials[2], credentials[3])
-mqttClient.createClient('food', drone_subscribe_topics)
+mqttClient.createClient('food', ['food',])
 mqttClient.startConnection()
 
 
