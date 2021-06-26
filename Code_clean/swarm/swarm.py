@@ -3,7 +3,7 @@ import os
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
-from lib import drone_interface, services as sv
+from lib import services as sv
 from lib import credentials as cr
 from lib import path_generator as pg
 from lib import timer as tm
@@ -16,6 +16,13 @@ from cflib.utils import uri_helper
 
 global ready
 ready = False
+
+
+drone_subscribe_topics = ['food',]
+credentials = cr.getCredentials()
+mqttClient = sv.MqttClient(credentials[0], credentials[1], credentials[2], credentials[3])
+mqttClient.createClient('food', drone_subscribe_topics)
+mqttClient.startConnection()
 
 
 def getCurrentPosition(interface):
@@ -111,7 +118,7 @@ initialized = False
 assigned_scout = False
 food_found = False
 food_gathering = False
-food_position = [4, 4]
+food_position = []
 
 # this time is used for main/swarm execution
 time_passed = 0
@@ -122,6 +129,11 @@ response_time = 0.2 #s
 gathering_delay = 2
 gathering_time = 0
 index = 0
+
+_, message_food = mqttClient.messages.pop(0)
+print('food locations are: ', message_food['food'])
+food_position = message_food['food']
+mqttClient.messages = []
 
 
 timer = tm.Timer()

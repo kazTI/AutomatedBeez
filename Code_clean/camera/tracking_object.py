@@ -15,6 +15,7 @@ def click_event(event, x, y, flags, image):
     global pixel_bound_y_high
     global food_location
     global food_location_in_pixel
+
     if event == cv2.EVENT_LBUTTONDOWN:
         global click
         if click == 0:
@@ -48,7 +49,7 @@ def click_event(event, x, y, flags, image):
         elif click == 4:
             food_location_in_pixel = (x, y)
             cv2.circle(image, food_location_in_pixel, 50, (0, 0, 255), 2, cv2.LINE_4)
-            food_location = calculateGridCoordinates(food_location_in_pixel, cells)
+            food_location = (calculateGridCoordinates(food_location_in_pixel, cells))
         
         cv2.imshow('Configuration', image)
         click += 1
@@ -73,10 +74,16 @@ def calculateGridCoordinates(pixel_coords, cells):
     gridY = float((pixel_coords[1] - pixel_bound_y_low)) / float((deltaY)) * cells
     return (int(gridX), int(gridY))
 
-def createMessage(drone1_position=None, drone2_position=None):
+def createMessageDrone(drone1_position=None, drone2_position=None):
     message =   {
                     "drone_1": drone1_position,
                     "drone_2": drone2_position,
+                }
+    return message
+
+def createMessageFood(food_locations_list=[]):
+    message =   {
+                    "food": food_locations_list
                 }
     return message
 
@@ -176,9 +183,10 @@ while True:
             x2, y2 = calculateGridCoordinates((x2, y2), cells)
             print('Grid Coords Drone 2: ', (x2, y2))
 
-        message = createMessage([x1, y1])
-        mqttClient.sendPublish('drone_3', message, 0)
-        
+        message_drone = createMessageDrone([x1, y1])
+        message_food = createMessageFood(food_location)
+        mqttClient.sendPublish('drone_3', message_drone, 0)
+        mqttClient.sendPublish('food', message_food, 0)
         time_passed = 0
         print(' ')
 
