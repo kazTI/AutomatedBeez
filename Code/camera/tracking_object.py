@@ -76,8 +76,8 @@ def calculateGridCoordinates(pixel_coords, cells):
 
 def createMessageDrone(drone1_position=None, drone2_position=None):
     message =   {
-                    "crazyflie_1": drone1_position,
-                    "crazyflie_2": drone2_position,
+                    "crazyflie_0": drone1_position,
+                    "crazyflie_1": drone2_position,
                 }
     return message
 
