@@ -5,6 +5,7 @@ import math
 import os
 import logging
 import time
+import threading as td
 
 import cflib.crtp
 from cflib.crazyflie import Crazyflie
@@ -86,10 +87,12 @@ class DroneInterface:
         self.URI = URI
         self.periferal = Periferal(self.URI)
         self.cells = 8
+        self.message = ''
 
         self.drone_start_position = []
         self.drone_current_position = []
         self.drone_destination = None
+        self.name = name
 
         self.drone_states = ['available', 'idle', 'scouting', 'returning' 'dancing', 'gathering']
         self.drone_state = self.drone_states[0]
@@ -97,12 +100,21 @@ class DroneInterface:
         self.bussy = False
         self.flying = False
 
-        self.clientName = name
-        self.drone_subscribe_topics = [self.clientName,]
         self.credentials = cr.getCredentials()
         self.mqttClient = sv.MqttClient(self.credentials[0], self.credentials[1], self.credentials[2], self.credentials[3])
-        self.mqttClient.createClient(self.clientName, self.drone_subscribe_topics)
+        self.mqttClient.createClient('drone', ['drone',])
         self.mqttClient.startConnection()
+        position_thread = td.Thread(target=self.getCurrentPosition, daemon = True)
+        position_thread.start()
+
+    def getCurrentPosition(self):
+        while True:
+            if not len(self.mqttClient.messages) <= 0:
+                _, self.message = self.mqttClient.messages.pop(0)
+                print('Message from controller: ', self.message[self.name])
+                self.drone_current_position = self.message[self.name]
+                self.mqttClient.messages = []
+                time.sleep(0.2)
 
     def createMessage(self, state, nextPosition):
         message =   {
