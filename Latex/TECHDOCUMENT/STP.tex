@@ -1,13 +1,96 @@
 \section{Software Test Plan}
-De test plan zal worden opgesplitst in een software-matige kant en een hardware-matige kant. Zo kan voor ieder testomgeving omschreven worden wat er gebeurt binnen de omgeving, en de resultaat van de testen.
+De test plan zal worden opgesplitst in een software-matige kant en een hardware-matige kant. Zo kan voor ieder testomgeving 
+omschreven worden wat er gebeurt binnen de omgeving, en de resultaat van de testen.
 
-\subsection{Software}
+\subsection{Test environment}
+
+\subsection*{Software}
 Om de testen op te zetten is het natuurlijk nodig om voor de drones bijbehorende software te maken. Dit betekent dat er een vorm van aansturing moet zijn, oftewel een interface om de drones mee aan te sturen. Deze interface bestuurd de benodigde commandos naar de individuele drones. De server draait een python server om de interface te runnen. Het is mogelijk om dit te doen op een laptop die Windows draait.
 Deze code wordt via python ook verbonden met een MQTT server, die dan verbonden is met een raspberry pi of Windows laptop waar een camera aan hangt. Hierop wordt code uitgevoerd om beeld te verwerken. Dit gebeurt ook in python.
 Ten slotte is er nog een simulatie aanwezig van twee of drie drones die op een scherm afgebeeld worden in WeBots. Dit gebeurt op een Windows laptop die in staat is deze software uit te voeren.
 Alle code is geschreven door de gehele project team.
 
-\subsection{Hardware}
+\subsection*{Hardware}
 Voor de hardware wordt er gebruik gemaakt van twee drones van de merk CrazyFlie 2.0. De architectuur van deze drones is te vinden in de documentatie van CrazyFlie. De gehele simulatie zal deze drones aan moeten staan, aangezien dit de visuele indicatie is van de gedrag van bijen.
 De centrale server is een python script die op een Windows pc draait. Deze laptop hoeft niet krachtig te zijn, gezien zijn voornaamste taken locaties ontvangen, omrekenen en commandos versturen naar de drones zijn. Ook deze heeft geen down-time tijdens de simulatie, want anders weet een bij/drone niet wat het moet doen.
 Ten slotte is er een apparaat met een camera nodig. Er zou gekozen kunnen worden voor een raspberry pi met een PiCam v2, maar het werkt net zo goed met een laptop met Windows waar een goedkope webcam aan is gesloten. Daarom is er uiteindelijk gekozen voor een laptop met een webcam. Deze webcam kan fotos en films in full HD maken. Beide de laptop en de webcam zijn constant aan, gezien de drones ten alle tijden zijn locatie moet weten.
+
+\newpage
+
+\subsection{Test identification}
+De testen zullen betrekkeing hebben tot de subsystemen van het project. Om het volledigen systeem te testen, zullen de subsytemen op hun individuele onderdelen getest worden. Onder deze onderdelen valt het volgende, in/uitgaande communicatie en gedrag dat het subsysteem uit gebaseerd op deze informatie.
+De in en uitgaande communicatie zal plaatsvinden in een test die losstaat van de subsystemen, omdat de toepassing hiervan hetzelfde is van de systemen.
+
+
+\subsection{Planned tests}
+In deze paragraaf worden de testen neergezet die bij de test resultaten behandeld zullen worden.
+Deze testen zijn niet directe testen maar zullen gegroepeerde systeemfuncties testen. 
+
+\subsubsection{MQTT Communicatie}
+
+\begin{table}[hbt!]
+    \begin{tabular}[t]{|m{0.3cm}|m{3.2cm}|m{7.5cm}|}\hline
+    A & Test objective & MQTT comuunicatie \\ \hline
+    B & Test Level & System wide\\ \hline
+    C & Test type & API testing\\ \hline
+    D & Requirements & Camera MQTT communicatie, Swarm MQTT communicatie, Simulatie MQTT communicatie\\ \hline
+    E & Invoer & Message: drone\_id, state, position\\ \hline
+    F & Verwachte uitkomst & positie per drone\_id\\ \hline
+    \end{tabular}
+\end{table}
+
+
+\subsubsection{Camera Object tracking}
+
+\begin{table}[hbt!]
+    \begin{tabular}[t]{|m{0.3cm}|m{3.2cm}|m{7.5cm}|}\hline
+    A & Test objective & Plaatsbepaling van object \\ \hline
+    B & Test Level & Camera Subsystem\\ \hline
+    C & Test type & Unit test\\ \hline
+    D & Requirements & Camera plaatsbepaling van objecten, omvormen van pixel naar grid locatie\\ \hline
+    E & Invoer & Camera gemonteerd aan plavond, drone geplaatst in beeld van camera \\ \hline
+    F & Verwachte uitkomst & Border om locatie drone, grid locatie drone\\ \hline
+    \end{tabular}
+\end{table}
+
+\newpage
+
+\subsubsection{Drone foodsearch}
+
+\begin{table}[hbt!]
+    \begin{tabular}[t]{|m{0.3cm}|m{3.2cm}|m{7.5cm}|}\hline
+    A & Test objective & Drone vliegt naar de locatie van eten\\ \hline
+    B & Test Level & subsystem\\ \hline
+    C & Test type & Unit tests\\ \hline
+    D & Requirements & Path generation, Path navagation, \\ \hline
+    E & Invoer & Een drone URI voedsel locatie\\ \hline
+    F & Verwachte uitkomst & De aangewezen drone verplaatst zich naar de voedselbron\\ \hline
+    \end{tabular}
+\end{table}
+
+\subsubsection{Drone foodget}
+
+\begin{table}[hbt!]
+    \begin{tabular}[t]{|m{0.3cm}|m{3.2cm}|m{7.5cm}|}\hline
+    A & Test objective & Drone vliegt continue tussen eten en korf\\ \hline
+    B & Test Level & subsystem\\ \hline
+    C & Test type & Unit tests\\ \hline
+    D & Requirements & Path generation, Path navagation, collision detection\\ \hline
+    E & Invoer & Een drone URI\\ \hline
+    F & Verwachte uitkomst & De aangewezen drone verplaatst tussen de voedselbron en de korf,
+     zonder dat deze tegen andere drones botst.\\ \hline
+    \end{tabular}
+\end{table}
+
+\subsubsection{Crazyflie weergeven in simulatie}
+
+\begin{table}[hbt!]
+    \begin{tabular}[t]{|m{0.3cm}|m{3.2cm}|m{7.5cm}|}\hline
+    A & Test objective & Het weergeven van de locaties van hardware drones in de simulatie\\ \hline
+    B & Test Level & subsystem\\ \hline
+    C & Test type & UI testing\\ \hline
+    D & Requirements & Hardware weergeven in simulatie\\ \hline
+    E & Invoer & MQTT message met drone\_id, postitie\\ \hline
+    F & Verwachte uitkomst & De positie van de crazyflie drone word weergegeven in de simulatie\\ \hline
+    \end{tabular}
+\end{table}
