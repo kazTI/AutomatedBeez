@@ -69,6 +69,8 @@ def gatherFood(interface):
         loop = True
         command_time = 0
         command_delay = 2
+        interface.drone_start_position = interface.drone_current_position
+        print('start position: ', interface.drone_start_position)
         while loop:
             command_time += timer.tick()
             if command_time > command_delay:
