@@ -98,6 +98,7 @@ def gatherFood(index, interface):
                                 interface.gathering_food = False
                 gathering_time = 0
 
+
     elif isinstance(interface, di.DroneInterface):
         interface.drone_state = 'gathering'
         interface.takeoff()
@@ -127,23 +128,30 @@ def gatherFood(index, interface):
                 command_time = 0
 
 
-
-
-
 # initialize drone interfaces and assign start positions for the simulated drones
-drone_interfaces = []
+crazyflie_interfaces = []
+
 sim_drone_interface_0 = sdi.SimDroneInterface('drone_0')
 sim_drone_interface_0.drone_start_position = [20, 24]
 drone_interfaces.append(sim_drone_interface_0)
+
 sim_drone_interface_1 = sdi.SimDroneInterface('drone_1')
 sim_drone_interface_1.drone_start_position = [18, 26]
 drone_interfaces.append(sim_drone_interface_1)
+
 sim_drone_interface_2 = sdi.SimDroneInterface('drone_2')
 sim_drone_interface_2.drone_start_position = [16, 24]
 drone_interfaces.append(sim_drone_interface_2)
+
+drone_interfaces = []
+uris = ['radio://0/80/2M/E7E7E7E7E7', 'radio://0/80/2M/E7E7E7E7E8']
+crazyflies = 1
 drone_3_URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
-# drone_interface_3 = di.DroneInterface('drone_3', drone_3_URI)
-# drone_interfaces.append(drone_interface_3)
+for i in range(crazyflies):
+    crazyflie = 'crazyflie_' + str(i)
+    crazyflie_interfaces.append(di.DroneInterface(crazyflie, uri_helper.uri_from_env(default=uris[i])))
+    drone_interfaces.extend(crazyflie_interfaces)
+
 
 i0_started = False
 i1_started = False
@@ -184,7 +192,6 @@ while running:
     i0_started = getCurrentPosition(sim_drone_interface_0, i0_started)
     i1_started = getCurrentPosition(sim_drone_interface_1, i1_started)
     i2_started = getCurrentPosition(sim_drone_interface_2, i2_started)
-    # i3_started = getCurrentPosition(drone_interface_3, i3_started)
 
     # execution is only done after specific amount of time has passed
     time_passed += timer.tick()
