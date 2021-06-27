@@ -9,8 +9,7 @@
 *.toc
 *.pdf
 .vscode
-Code/swarm/main/__pycache__
-Code/lib/__pycache__
-Code/lib/credentials.py
 *__pycache__
+Code_clean/lib/credentials.py
 Code_clean/cflib
+Code_clean/cache
