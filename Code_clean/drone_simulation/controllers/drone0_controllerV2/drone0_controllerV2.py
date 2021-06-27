@@ -1,6 +1,6 @@
 from controller import Supervisor
 import sys
-sys.path.append('C:\\Users\\Robert\\Desktop\\TINLabs AS\\Code')
+sys.path.append('C:\\Users\\Robert\\Desktop\\TINLabs AS\\Code_clean')
 import lib.services as sv
 import lib.credentials as cr
 import drone_simulation.controllers.movement_interface.movement_controllerV2 as mi
@@ -10,6 +10,7 @@ import drone_simulation.controllers.movement_interface.movement_controllerV2 as 
 drone = Supervisor()
 drone_node = drone.getSelf()
 translation_handler = drone_node.getField("translation")
+rotation_handler = drone_node.getField("rotation")
 
 
 # get the time step of the current world.
@@ -41,7 +42,7 @@ while drone.step(timestep) != -1:
 
     # every 200ms current position is sent to the server
     time_passed += timestep
-    if time_passed > response_time and movement_controller.started:
+    if time_passed > response_time:
         absY = 1 if movement_controller.hover else 0
         message = (sent_message_count, (current_position[0], absY, current_position[2]))
         mqttClient.sendPublish(clientName + '_response', message, 0)
@@ -68,5 +69,9 @@ while drone.step(timestep) != -1:
 
     # process the movement of the drone (only if drone controller started)
     if movement_controller.started:
+        # print(movement_controller.rotating)
         # print(movement_controller.current_position)
-        translation_handler.setSFVec3f(movement_controller.current_position)
+        if movement_controller.rotating:
+            rotation_handler.setSFRotation(movement_controller.rotation)
+        else:
+            translation_handler.setSFVec3f(movement_controller.current_position)
