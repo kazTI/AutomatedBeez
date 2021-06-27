@@ -95,7 +95,10 @@ def gatherFood(interface):
 
 
 # initialize drone interfaces and assign start positions for the simulated drones
+crazyflie_interfaces = []
 drone_interfaces = []
+uris = ['radio://0/80/2M/E7E7E7E7E7', 'radio://0/80/2M/E7E7E7E7E8']
+crazyflies = 1
 sim_drone_interface_0 = sdi.SimDroneInterface('drone_0')
 sim_drone_interface_0.drone_start_position = [20, 24]
 # drone_interfaces.append(sim_drone_interface_0)
@@ -105,9 +108,11 @@ sim_drone_interface_1.drone_start_position = [18, 26]
 sim_drone_interface_2 = sdi.SimDroneInterface('drone_2')
 sim_drone_interface_2.drone_start_position = [16, 24]
 # drone_interfaces.append(sim_drone_interface_2)
-drone_3_URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
-drone_interface_3 = di.DroneInterface('crazyflie_1', drone_3_URI)
-drone_interfaces.append(drone_interface_3)
+for i in range(crazyflies):
+    crazyflie = 'crazyflie_' + str(i)
+    crazyflie_interfaces.append(di.DroneInterface(crazyflie, uri_helper.uri_from_env(default=uris[i])))
+    
+drone_interfaces.extend(crazyflie_interfaces)
 
 
 
