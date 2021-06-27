@@ -2,7 +2,7 @@
 In dit hoofdstuk word een opsomming en uitbreiding gegeven van de systeem requirements. Hieronder vallen onder andere
 de modus/states waarin het systeem zich kan bevinden en de communicatie die plaatsvind om het systeem te laten werken.
 
-\subsection{requirements}
+\subsection{Requirements}
 
 \subsubsection*{Camera}
 Aan de camera zit een aantal eisen. Het meest voor de hand liggende eis is dat de resolutie hoog genoeg moet zijn
@@ -36,11 +36,13 @@ Verder heeft de simulatie eigen statussen die hij bijhoud die niet nodig zijn vo
 \subsection{Required states and modes}
 
 \subsubsection*{Camera}
-In het geval dat het systeem actief is, is ook de camera en de server actief.
-Aangezien de drone constant zijn locatie moet weten binnen het systeem, is het niet mogelijk om het gehele systeem 
-idle te maken. Er is alleen een verschil tussen de berichten die worden verstuurd direct na de opstard en de berichten daarna.
-Allereerst word er namelijk de dimensies van de grid gestuurd en de locatie van de voedselbronnen. 
-Alle berichten hierna zijn de locatie van de drones en de objecten daaromheen.
+Voor het functionering van de echte drones is het nodig dat de camera de coordinaten van de drones ophaald. Daarom is het
+de bedoeling dat de camera altijd als eerst opgestart wordt bij het gebruiken van het swarm systeem.
+Er is wel een verschil tussen de berichten die worden verstuurd direct na het opstarten van de camera.
+Dat ligt nammelijk aan het gebruik van systeem dat samen met de camera werkt.
+De interface voor detectie van drones die met behulp van camera draait hoort als eerst geconfigureert te worden.
+Als eerst wordt er namelijk de dimensies van de grid gestuurd en de locatie van de voedselbronnen. 
+Alle berichten die daarna worden verstuurd vertegenwordingen de locaties van de drones.
 
 \subsubsection*{Server}
 Zoals eerder genoemd in de requirements, maakt de server gebruik van modes om de drones hun gedrag te laten uiten.
@@ -53,7 +55,7 @@ De verschillende modes waarin de drone zich kan bevinden zijn, waiting, scouten,
     door te geven, aangegeven door te dansen. 
     
     \item[Scouten]
-    Een scoutende bij gaat opziek naar een voedselbron. Omdat er gewerkt wordt met object detectie
+    Een scoutende bij gaat opzoek naar een voedselbron. Omdat er gewerkt wordt met object detectie
     is er voor gekozen om de drone direct naar de bron te laten vliegen. Er is geen meerwaarde in het rond laten 
     vliegen van de drone wanneer het vinden van het doel al gebeurt is voor de vlucht. 
     Bij het scouten wordt er door de drone naar het einddoel gevlogen en weer terug om de locatie door te geven in de volgende modus.
@@ -63,17 +65,15 @@ De verschillende modes waarin de drone zich kan bevinden zijn, waiting, scouten,
     de locatie en potentie van de voedselbron door communiceren. Door dit te doen worden de andere bijen naar de gather modus gezet
     en wordt de locatie doorgegeven
     
-    \item[gatheren]  
-    Wanneer de drones aan het gatheren zijn, zijn ze naar de voedselbron aan het vliegen totdat deze leeg en terug naar
-    de korf totdat de voedselbron leeg is. Wanneer de het laatste voedsel uit de bron is gehaald, 
-    worden de drones opnieuw in waiting gezet.
+    \item[Gatheren]  
+    Drones gebruiken ook een toestand voor het verzamelen van voedsel, daarbij halen de drones het eten van het voedselbron tot dat deze leeg is.
+    Wanneer de het laatste voedsel uit de bron is gehaald, gaan de drones in een rust toestand.
 \end{description}
 
 \subsubsection*{Simulatie}
-De simulatie krijgt zijn commandos binnen nadat deze zijn uitgevogled door de server. Om deze reden maakt de simulatie geen gebruik van eigen modus, 
-maar deelt hij deze met die van de server. Om deze reden kan er voor de modus naar de server modus gekeken worden, 
-om te achterhalen wat de drones hun modus is binnen de simulatie. wel worden er statussen bij de gisimuleerde drones gebruikt om de huidige status van
-de drone bij te houden. Deze statussen zijn takeoff, moving, landing en of de drone aan staat of niet.
+De gesimuleerde drones krijgen hun commandos binnen via een interface dat op de server staat. Zo worden de toestanden en acties van de gesimuleerde drones
+aangepast door middel van deze interface. Deze interface communiceert dan met de controllers die in de simulatie omgeving de drones besturen. De toestanden
+waarin de drone zich kan bevinden zijn: available, scouting, retuning.
 
 
 \subsection{System internal interface requirements}

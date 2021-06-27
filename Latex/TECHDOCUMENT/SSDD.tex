@@ -1,7 +1,7 @@
 \section{System/Subsystem Design Description}
 
 \subsection{System wide design decisions}
-In dit hoofdstuk worden, zoals de tital al verraad, de design decisions behandeld. Hieronder vallen bijvoorbeeld
+In dit hoofdstuk worden de design decisions behandeld. Hieronder vallen bijvoorbeeld
 input/outputs van het systeem, gedrag keuzes en andere onderdelen die voor het gehele systeem gelden
 
 
@@ -14,18 +14,22 @@ Vanuit de server worden de drones aantgestuurd en wordt informatie van en naar d
 wordt een MQTT broker gebruikt.
 
 \subsubsection*{Gedrag}
+<<<<<<< Updated upstream
 Met gedrag worden de keuzes bedoelt die het systeem maakt, hiermee worden de basis van het systeem bepaald.
+=======
+Met gedrag worden de keuzes bedoelt die het systeem maakt, hiermee worden de basis functies van het systeem bepaald.
+>>>>>>> Stashed changes
 \begin{enumerate}
-    \item Bij opstart word een drone naar de voedsel bron gestuurd.
-    \item Wanneer de drone deze locatie heeft berijkt zal hij trugkeren naar eht startpunt
-    \item De Drone danst om de locatie te delen met de andere drones
-    \item Meerdere drones worden gestuurd om het voedsel op te halen
-    \item Wanneer het laatste voedsel uit de bron is gehaald en alle drones binnen zijn worden een nieuwe scout gestruurd
+    \item Bij opstarten word een drone naar het voedsel bron gestuurd.
+    \item Zodra de drone deze locatie bereikt zal deze vervolgens terugkeren naar zijn start positie oftewel het korf.
+    \item De drone zal vervolgens een dans uitvoeren om de locatie te delen met de andere drones
+    \item Tot slot krijgen andere drones de opdracht om voedsel op te halen en deze terug te brengen naar het korf.
+    \item Daarna zal de cyclus zich herhalen.
 \end{enumerate}
 
 \subsubsection*{Inputs/outputs}
 De server krijgt vanuit meerdere punten informatie binnen en verstuurd het ook naar meerdere subsystemen.
-Deze inputs en outputs worden uitgebreided in het hoofdstuk Interface Design Decisions.
+Deze inputs en outputs worden in het hoofdstuk Interface Design Decisions uitgebreid besproken.
 
 
 \begin{description}
@@ -45,12 +49,12 @@ De simulatie is een eenvoudig manier om een overzicht te krijgen over het gehele
 Hier wordt een opsomming gegeven van alle hardware en software componenten gegeven, 
 
 \begin{description}
-    \item[Software] Camera
-    \item[Software] MQTT Broker
-    \item[Software] simulatie
-    \item[Software] Server
-    \item[Hardware] Picam
-    \item[Hardware] Crazyflie
+    \item[SW] Camera
+    \item[SW] MQTT Broker
+    \item[SW] Simulatie
+    \item[SW] Server
+    \item[HW] Picam / Camera
+    \item[HW] Crazyflie
 \end{description}
 
 \subsubsection{System architecture}
