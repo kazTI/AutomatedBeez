@@ -6,22 +6,15 @@ input/outputs van het systeem, gedrag keuzes en andere onderdelen die voor het g
 
 
 \subsubsection{Camera}
-Aan de camera zit een aantal eisen. Het meest voor de hand liggende eis is dat de resolutie hoog genoeg moet zijn
-om bepaalde objecten te kunnen herkennen. Dit is niet de enige eis, zo moet de camera ook kleur kunnen herkennen
-en modulair zijn. Deze camera zal aangesloten moeten worden aan een microcontroller
-zodat de fotos die de camera maakt bewerkt kan worden. Dit betekent dat de microcontroller krachtig genoeg moet zijn
-om fotos op te vragen, verwerken en berekeningen erop uitvoeren. Ook moet hij vervolgens de verwerkte data doorsturen
-naar een centrale server. Dit betekent dat er een manier moet zijn op de microcontroller om deze data te verzenden.
-Dit zijn de hardware eisen aan de camera kant, als dit allemaal voldaan wordt is het mogelijk om de camera te
-gebruiken voor de simulatie van bijen.
+De camera zal dienen als de zintuigen van de drones. Echte bijen gebruiken reuk en zicht om hun eten op te sporen. Dat betekent dat het vanzelfsprekend is om hiervoor een camera te gebruiken, gezien dit zicht vervangt. De hersenen van elk levend wezen is zo ingesteld om onderscheid te kunnen maken tussen verschillende objecten die wij middels zicht kunnen observeren. Dit onderscheid zal ook gemaakt moeten worden binnen de simulatie, gezien dit informatie is die een bij aanstuurt om een bepaalde gedrag te vertonen.
 
 \subsubsection{Server}
-Omdat het een gecentraliseert systeem is worden de meeste acties bepaald door een centraal subsysteem, in dit geval is dat de server.
+Omdat het een gecentraliseerd systeem is worden de meeste acties bepaald door een centraal subsysteem, in dit geval is dat de server.
 Vanuit de server worden de drones aantgestuurd en wordt informatie van en naar de simulatie en camera verstuurd. Voor alle communicatie
 wordt een MQTT broker gebruikt.
 
 \subsubsection*{Gedrag}
-Met gedrag worden de keuzes bedoelt die het systeem maakt, hiermee worden de bsis van het systeem bepaald.
+Met gedrag worden de keuzes bedoelt die het systeem maakt, hiermee worden de basis van het systeem bepaald.
 \begin{enumerate}
     \item Bij opstart word een drone naar de voedsel bron gestuurd.
     \item Wanneer de drone deze locatie heeft berijkt zal hij trugkeren naar eht startpunt
