@@ -10,6 +10,6 @@
 *.pdf
 .vscode
 *__pycache__
-Code_clean/lib/credentials.py
-Code_clean/cflib
-Code_clean/cache
+Code/lib/credentials.py
+Code/cflib
+Code/cache
