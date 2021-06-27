@@ -49,15 +49,15 @@ De simulatie is een eenvoudig manier om een overzicht te krijgen over het gehele
 \subsection{System architectural design}
 
 \subsubsection{System components}
-Hier wordt een opsomming gegeven van alle hardware en software componenten gegeven
+Hier wordt een opsomming gegeven van alle hardware en software componenten gegeven, 
 
 \begin{description}
-    \item[SW] Camera
-    \item[SW] MQTT Broker
-    \item[SW] simulatie
-    \item[SW] Server
-    \item[HW] Picam
-    \item[HW] Crazyflie
+    \item[Software] Camera
+    \item[Software] MQTT Broker
+    \item[Software] simulatie
+    \item[Software] Server
+    \item[Hardware] Picam
+    \item[Hardware] Crazyflie
 \end{description}
 
 \subsubsection{System architecture}
@@ -66,12 +66,17 @@ Diagram met hardware en software componenten van het gehelen systeem en de relat
 Aangezien het project inhoudt dat een aantal bijen gesimuleerd wordt, is het nodig om hun zintuigen ook te simuleren. Dit gebeurt door middel van een camera aan een raspberry pi. Hier zullen uiteraard eisen aan zitten, maar zullen in de SRS vermeldt worden. Om deze camera draadloos te laten werken is er ook een batterij pack nodig.
 
 \subsubsection*{Server}
-asd
-\newline
+Hieronder is de relatie te zien tussen de verschillende onderedelen van de Server. Hierin zijn ook de componenten meegenomen waar de Server mee communiceerd buiten zichzelf. Op deze manier is een overview van het volledige systeem weergegeven.
+De eerste communicatie begint wanneer de Camera begint met communiceren naar de MQTT broker.
+\begin{center}
+    \includegraphics[scale=0.5]{../IMAGES/ServerV3.jpg}
+\end{center}
+
+
 
 \subsubsection*{Simulatie}
     \begin{center}
-    \hspace*{-3.5cm}\includegraphics[width=1.6\textwidth]{../IMAGES/Simulation Interaction.jpg}
+    \includegraphics[scale=0.22]{../IMAGES/Simulation Interaction.jpg}
     \end{center}
     Het diagram hierboven weergeeft de communicatie tussen de simulatie en de server. In de simulatie
     wordt het gedrag van bijen met behulp van 3 ontworpen drones gesimuleerd. Om dat mogelijk te maken
@@ -85,7 +90,7 @@ asd
             Dit wordt mogelijk gemaakt door te communiceren tegen een opgebouwde interface. Deze
             interface communiceerd dan vervolgens tegen een controller die een gesimuleerde drone bestuurd.
         \end{enumerate}
-        \newpage
+        
         \item[OUTPUT:] \hfill
         \begin{enumerate}
             \item De output bij deze simulatie is verplaatsing van de gesimuleerde drone naar een geplannde positie.
