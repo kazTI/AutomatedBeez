@@ -1,6 +1,6 @@
 from controller import Supervisor
 import sys
-sys.path.append('C:\\Users\\Robert\\Desktop\\TINLabs AS\\Code_clean')
+sys.path.append('C:\\Users\\Robert\\Desktop\\TINLabs AS\\Code')
 import lib.services as sv
 import lib.credentials as cr
 import drone_simulation.controllers.movement_interface.movement_controllerV2 as mi
