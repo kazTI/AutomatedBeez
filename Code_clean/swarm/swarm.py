@@ -37,13 +37,13 @@ def getCurrentPosition(interface):
             print('Message from controller: ', message)
             interface.drone_current_position = message
             ready = True
-    elif isinstance(interface, di.DroneInterface):
-        if not len(interface.mqttClient.messages) <= 0:
-            _, message = interface.mqttClient.messages.pop(0)
-            print('Message from controller: ', message['drone_1'])
-            interface.drone_current_position = message['drone_1']
-            ready = True
-        interface.mqttClient.messages = []
+    # elif isinstance(interface, di.DroneInterface):
+    #     if not len(interface.mqttClient.messages) <= 0:
+    #         _, message = interface.mqttClient.messages.pop(0)
+    #         print('Message from controller: ', message[interface.name])
+    #         interface.drone_current_position = message[interface.name]
+    #         ready = True
+    #     interface.mqttClient.messages = []
 
 def executeSimDroneMovement(interface, current_position, next_position):
     # fix this when values are higher then normal
@@ -104,7 +104,7 @@ sim_drone_interface_2 = sdi.SimDroneInterface('drone_2')
 sim_drone_interface_2.drone_start_position = [16, 24]
 # drone_interfaces.append(sim_drone_interface_2)
 drone_3_URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
-drone_interface_3 = di.DroneInterface('drone_3', drone_3_URI)
+drone_interface_3 = di.DroneInterface('crazyflie_1', drone_3_URI)
 drone_interfaces.append(drone_interface_3)
 
 
@@ -133,7 +133,6 @@ index = 0
 _, message_food = mqttClient.messages.pop(0)
 print('food locations are: ', message_food['food'])
 food_position = message_food['food']
-mqttClient.messages = []
 
 
 timer = tm.Timer()
@@ -143,11 +142,11 @@ while running:
     getCurrentPosition(sim_drone_interface_0)
     getCurrentPosition(sim_drone_interface_1)
     getCurrentPosition(sim_drone_interface_2)
-    getCurrentPosition(drone_interface_3)
+    #getCurrentPosition(drone_interface_3)
 
     # execution is only done after specific amount of time has passed
     time_passed += timer.tick()
-    if time_passed > response_time and ready:
+    if time_passed > response_time:
         # prepare the simulation by giving the drones a start position
         if not initialized:
             for interface in drone_interfaces:
@@ -157,16 +156,19 @@ while running:
                     interface.drone_current_position = message
                     interface.start(message)
                 elif isinstance(interface, di.DroneInterface):
-                    if interface.drone_current_position:
-                        interface.drone_start_position = interface.drone_current_position
-                        print('drone start position is: ', interface.drone_start_position)
-                        initialized = True
+                    initialized = True
 
+        
         if not assigned_scout and initialized and not food_found:
             interface = rd.choice(drone_interfaces)
             assigned_scout = True
 
-        if message and assigned_scout and not food_found:
+        if not interface.drone_start_position:
+            interface.drone_start_position = interface.drone_current_position
+            print('start positinon: ', interface.drone_start_position)
+
+
+        if interface.message and assigned_scout and not food_found:
             if interface.drone_state == 'available':
                 print('takeoff')
                 interface.takeoff()
