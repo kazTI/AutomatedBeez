@@ -24,10 +24,10 @@ class PositionHandler:
             return dest_coord_z
 
     def getAbsoluteCoordX(self, x):
-        return int(self.grid_cells * ((x - self.offset[0]) / self.grid_length))
+        return int(self.grid_cells * (x / self.grid_length))
 
     def getAbsoluteCoordZ(self, z):
-        return int(self.grid_cells * ((z - self.offset[2]) / self.grid_length))
+        return int(self.grid_cells * (z / self.grid_length))
 
 class MqttClient:
     # initialize MqttClient for communication with Mqtt broker
@@ -102,7 +102,8 @@ class MqttClient:
         topic = message.topic
         message = str(message.payload.decode('utf-8'))
         message = json.loads(message)
-        # print(f'[{self.name}] message received: ', topic, message)
+        print('###### NEW MESSAGE ######')
+        print(f'[{self.name}] Message received on {topic}: ', message)
         self.messages.append((topic, message))
 
 if __name__ == '__main__':

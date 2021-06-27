@@ -18,12 +18,14 @@ class SimDroneInterface:
                                 1 : 'stop',
                                 2 : 'ascend',
                                 3 : 'descend',
-                                4 : 'move_forward',
-                                5 : 'move_backwards',
-                                6 : 'move_left',
-                                7 : 'move_right',
+                                4 : 'dance',
+                                5 : 'move_forward',
+                                6 : 'move_backwards',
+                                7 : 'move_left',
+                                8 : 'move_right',
                               }
         self.scout = False
+        self.flying = False
 
         # drone variables
         self.drone_start_position = None
@@ -60,6 +62,7 @@ class SimDroneInterface:
     def start(self, start_position):
         msg = self.createMessage(0, start_position)
         self.mqttClient.sendPublish(self.drone_publish_topic, msg, 0)
+        # print(msg)
 
 
     # take off the ground
@@ -72,21 +75,27 @@ class SimDroneInterface:
         msg = self.createMessage(3)
         self.mqttClient.sendPublish(self.drone_publish_topic, msg, 0)
 
-
-    # the following commands are indefinite movement to given direction
-    def move_forward(self):
+    # dance to recruit bees
+    def dance(self):
         msg = self.createMessage(4)
         self.mqttClient.sendPublish(self.drone_publish_topic, msg, 0)
 
-    def move_backwards(self):
-        msg = self.createMessage(5)
 
-    def move_left(self):
+    # the following commands are indefinite movement to given direction
+    def move_forward(self):
+        msg = self.createMessage(5)
+        self.mqttClient.sendPublish(self.drone_publish_topic, msg, 0)
+
+    def move_backwards(self):
         msg = self.createMessage(6)
         self.mqttClient.sendPublish(self.drone_publish_topic, msg, 0)
 
-    def move_right(self):
+    def move_left(self):
         msg = self.createMessage(7)
+        self.mqttClient.sendPublish(self.drone_publish_topic, msg, 0)
+
+    def move_right(self):
+        msg = self.createMessage(8)
         self.mqttClient.sendPublish(self.drone_publish_topic, msg, 0)
 
 
