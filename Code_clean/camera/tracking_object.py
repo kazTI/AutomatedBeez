@@ -76,8 +76,8 @@ def calculateGridCoordinates(pixel_coords, cells):
 
 def createMessageDrone(drone1_position=None, drone2_position=None):
     message =   {
-                    "drone_1": drone1_position,
-                    "drone_2": drone2_position,
+                    "crazyflie_1": drone1_position,
+                    "crazyflie_2": drone2_position,
                 }
     return message
 
@@ -185,7 +185,7 @@ while True:
 
         message_drone = createMessageDrone([x1, y1])
         message_food = createMessageFood(food_location)
-        mqttClient.sendPublish('drone_3', message_drone, 0)
+        mqttClient.sendPublish('drone', message_drone, 0)
         mqttClient.sendPublish('food', message_food, 0)
         time_passed = 0
         print(' ')
