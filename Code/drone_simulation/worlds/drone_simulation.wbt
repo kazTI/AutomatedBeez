@@ -5,9 +5,8 @@ WorldInfo {
   coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation 0.267102298638254 -0.9384543278655664 -0.21899734375683452 4.95890158307054
-  position 5.1332174445219625 1.6189569464377493 2.718095076699921
-  follow "drone_1"
+  orientation 0.41554121657285403 -0.8558929970913783 -0.3078517092028078 4.934152972215145
+  position 4.645644686291025 2.2052695569549536 2.7374895893758273
 }
 TexturedBackground {
 }
@@ -167,7 +166,7 @@ Solid {
   name "hive"
 }
 Solid {
-  translation 2.45 0 0.55
+  translation 2.45 0 1.85
   children [
     DEF hive Shape {
       appearance PBRAppearance {

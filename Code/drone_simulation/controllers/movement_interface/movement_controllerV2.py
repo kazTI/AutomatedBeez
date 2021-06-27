@@ -51,7 +51,6 @@ class MovementController:
         return self.hover
 
     def dance(self):
-        print(self.rotation)
         if self.rotation[3] < 2*math.pi and not self.reverse:
             self.rotating = True
             self.rotation[3] += self.rotation_speed

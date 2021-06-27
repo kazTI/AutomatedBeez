@@ -26,6 +26,7 @@ class SimDroneInterface:
                               }
         self.scout = False
         self.flying = False
+        self.gathering_food = False
 
         # drone variables
         self.drone_start_position = None

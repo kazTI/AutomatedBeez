@@ -102,8 +102,8 @@ class MqttClient:
         topic = message.topic
         message = str(message.payload.decode('utf-8'))
         message = json.loads(message)
-        print('###### NEW MESSAGE ######')
-        print(f'[{self.name}] Message received on {topic}: ', message)
+        # print('###### NEW MESSAGE ######')
+        # print(f'[{self.name}] Message received on {topic}: ', message)
         self.messages.append((topic, message))
 
 if __name__ == '__main__':
