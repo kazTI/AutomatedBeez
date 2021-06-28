@@ -147,6 +147,10 @@ drone {
   name "drone_2"
   controller "drone2_controllerV2"
 }
+drone {
+  translation 1.85 0.005 2.25
+  controller "real_drone_controller"
+}
 Solid {
   translation 1.85 0 2.45
   children [

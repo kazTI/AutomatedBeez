@@ -142,12 +142,12 @@ sim_drone_interface_2 = sdi.SimDroneInterface('drone_2')
 sim_drone_interface_2.drone_start_position = [16, 24]
 drone_interfaces.append(sim_drone_interface_2)
 
-uris = ['radio://0/80/2M/E7E7E7E7E7', 'radio://0/80/2M/E7E7E7E7E8']
-crazyflies = 1
-drone_3_URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
-for i in range(crazyflies):
-    crazyflie = 'crazyflie_' + str(i)
-    drone_interfaces.append(di.DroneInterface(crazyflie, uri_helper.uri_from_env(default=uris[i])))
+# uris = ['radio://0/80/2M/E7E7E7E7E7', 'radio://0/80/2M/E7E7E7E7E8']
+# crazyflies = 1
+# drone_3_URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
+# for i in range(crazyflies):
+#     crazyflie = 'crazyflie_' + str(i)
+#     drone_interfaces.append(di.DroneInterface(crazyflie, uri_helper.uri_from_env(default=uris[i])))
 
 
 i0_started = False
@@ -167,7 +167,7 @@ gathering = [False, False, False]
 
 food_found = False
 food_gathering = False
-food_position = []
+food_position = [24, 18]
 
 # this time is used for main/swarm execution
 time_passed = 0
@@ -182,9 +182,9 @@ index = 0
 dance_time_passed = 0
 dancing = False
 
-_, message_food = mqttClient.messages.pop(0)
-print('food locations are: ', message_food['food'])
-food_position = message_food['food']
+# _, message_food = mqttClient.messages.pop(0)
+# print('food locations are: ', message_food['food'])
+# food_position = message_food['food']
 
 timer = tm.Timer()
 running = True

@@ -1,6 +1,8 @@
 from controller import Supervisor
 import sys
-sys.path.append('C:\\Users\\Robert\\Desktop\\TINLabs AS\\Code')
+import os
+currentdir = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(currentdir + '..\..\..\..')
 import lib.services as sv
 import lib.credentials as cr
 import drone_simulation.controllers.movement_interface.movement_controllerV2 as mi

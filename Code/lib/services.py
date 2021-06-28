@@ -40,7 +40,7 @@ class MqttClient:
         self.messages = []
 
     # create new instace that will communicate the Mqtt broker
-    def createClient(self, name, topics):
+    def createClient(self, name, topics = []):
         self.name = name
         self.assigned_topics = topics
         self.client = mqtt.Client(self.name)
