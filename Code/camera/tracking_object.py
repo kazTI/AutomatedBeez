@@ -172,6 +172,7 @@ while True:
     if time_passed > response_time:
         print('Coordinates:')
         print('    - pixel coords drone 1: ', (x1, y1))
+        mqttClient.sendPublish('real_drone_instructions', [x1, y1], 0)
         x1, y1 = calculateGridCoordinates((x1, y1), cells)
         print('    - grid coords drone 1: ', (x1, y1))
 
