@@ -15,6 +15,11 @@ from lib import drone_interface as di
 
 from cflib.utils import uri_helper
 
+credentials = cr.getCredentials()
+mqttClient = sv.MqttClient(credentials[0], credentials[1], credentials[2], credentials[3])
+mqttClient.createClient('food', ['food',])
+mqttClient.startConnection()
+
 
 def getCurrentPosition(interface, started):
     global message
@@ -162,7 +167,7 @@ gathering = [False, False, False]
 
 food_found = False
 food_gathering = False
-food_position = [24, 18]
+food_position = []
 
 # this time is used for main/swarm execution
 time_passed = 0
@@ -176,6 +181,10 @@ index = 0
 
 dance_time_passed = 0
 dancing = False
+
+_, message_food = mqttClient.messages.pop(0)
+print('food locations are: ', message_food['food'])
+food_position = message_food['food']
 
 timer = tm.Timer()
 running = True
