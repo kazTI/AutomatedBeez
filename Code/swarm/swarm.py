@@ -27,12 +27,6 @@ def getCurrentPosition(interface, started):
             # print('Message from controller: ', message)
             interface.drone_current_position = message
             started = True
-    elif isinstance(interface, di.DroneInterface):
-        if not len(interface.mqttClient.messages) <= 0:
-            _, message = interface.mqttClient.messages.pop(0)
-            print('Message from controller: ', message['drone_1'])
-            interface.drone_current_position = message['drone_1']
-            started = True
 
     interface.mqttClient.messages = []
     return started
@@ -129,7 +123,7 @@ def gatherFood(index, interface):
 
 
 # initialize drone interfaces and assign start positions for the simulated drones
-crazyflie_interfaces = []
+drone_interfaces = []
 
 sim_drone_interface_0 = sdi.SimDroneInterface('drone_0')
 sim_drone_interface_0.drone_start_position = [20, 24]
@@ -143,14 +137,12 @@ sim_drone_interface_2 = sdi.SimDroneInterface('drone_2')
 sim_drone_interface_2.drone_start_position = [16, 24]
 drone_interfaces.append(sim_drone_interface_2)
 
-drone_interfaces = []
 uris = ['radio://0/80/2M/E7E7E7E7E7', 'radio://0/80/2M/E7E7E7E7E8']
 crazyflies = 1
 drone_3_URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
 for i in range(crazyflies):
     crazyflie = 'crazyflie_' + str(i)
-    crazyflie_interfaces.append(di.DroneInterface(crazyflie, uri_helper.uri_from_env(default=uris[i])))
-    drone_interfaces.extend(crazyflie_interfaces)
+    drone_interfaces.append(di.DroneInterface(crazyflie, uri_helper.uri_from_env(default=uris[i])))
 
 
 i0_started = False
