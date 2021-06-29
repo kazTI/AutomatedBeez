@@ -6,20 +6,38 @@ sys.path.append(parentdir)
 import threading as td
 import multiprocessing as mp
 import random as rd
-
+import cflib.crtp
 from lib import timer as tm
 from lib import credentials as cr
 from lib import services as sv
 from lib import path_generator as pg
 from lib import sim_drone_interface as sdi
 from lib import drone_interface as di
+import time
 
 from cflib.utils import uri_helper
+from cflib.crazyflie import Crazyflie
+from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 
 credentials = cr.getCredentials()
 mqttClient = sv.MqttClient(credentials[0], credentials[1], credentials[2], credentials[3])
 mqttClient.createClient('food', ['food',])
 mqttClient.startConnection()
+
+
+# def getCurrentPosition(interface, started):
+#     global message
+#     if isinstance(interface, sdi.SimDroneInterface):
+#         if not len(interface.mqttClient.messages) <= 0:
+#             message = interface.mqttClient.messages.pop(0)
+#             _, [_, [x, y, z]] = message
+#             # print('Raw message from controller: ', (x, y, z))
+#             message = (position_handler.getAbsoluteCoordX(x), y, position_handler.getAbsoluteCoordZ(z))
+#             # print('Message from controller: ', message)
+#             interface.drone_current_position = message
+
+#     interface.mqttClient.messages = []
+#     return started
 
 
 def executeSimDroneMovement(interface, current_position, next_position):
@@ -36,8 +54,12 @@ def executeSimDroneMovement(interface, current_position, next_position):
     if current_position == next_position:
         interface.stop()
 
+
 def gatherFood(index, interface):
     if isinstance(interface, sdi.SimDroneInterface):
+        print('now its time to gather food!!')
+        # print(interface.drone_current_position)
+        print(interface.gathering_food)
         while interface.gathering_food:
             if not gathering[index]:
                 gathering_timer = tm.Timer()
@@ -110,26 +132,46 @@ def gatherFood(index, interface):
 
 
 # initialize drone interfaces and assign start positions for the simulated drones
+global drone_interfaces
 drone_interfaces = []
 
+def connection(crazyflie, uri, i):
+    global ready
+    global drone_interfaces
+    cflib.crtp.init_drivers()
+    with SyncCrazyflie(uri, cf=Crazyflie(rw_cache='./cache')) as scf:
+        drone_interfaces.append(di.DroneInterface(crazyflie, uri_helper.uri_from_env(default=uris[0]), scf))
+        drone_interfaces[i].drone_state = 'available'
+        ready = True
+
+        while True:
+            time.sleep(10)
+
 sim_drone_interface_0 = sdi.SimDroneInterface('drone_0')
-sim_drone_interface_0.drone_start_position = [2, 3]
-drone_interfaces.append(sim_drone_interface_0)
+sim_drone_interface_0.drone_start_position = [20, 24]
+#drone_interfaces.append(sim_drone_interface_0)
 
 sim_drone_interface_1 = sdi.SimDroneInterface('drone_1')
-sim_drone_interface_1.drone_start_position = [1, 2]
-drone_interfaces.append(sim_drone_interface_1)
+sim_drone_interface_1.drone_start_position = [18, 26]
+#drone_interfaces.append(sim_drone_interface_1)
 
 sim_drone_interface_2 = sdi.SimDroneInterface('drone_2')
-sim_drone_interface_2.drone_start_position = [2, 1]
-drone_interfaces.append(sim_drone_interface_2)
+sim_drone_interface_2.drone_start_position = [16, 24]
+#drone_interfaces.append(sim_drone_interface_2)
 
-# uris = ['radio://0/80/2M/E7E7E7E7E7', 'radio://0/80/2M/E7E7E7E7E8']
-# crazyflies = 1
-# drone_3_URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
-# for i in range(crazyflies):
-#     crazyflie = 'crazyflie_' + str(i)
-#     drone_interfaces.append(di.DroneInterface(crazyflie, uri_helper.uri_from_env(default=uris[i])))
+uris = ['radio://0/80/2M/E7E7E7E7E8', 'radio://0/80/2M/E7E7E7E7E7']
+crazyflies = 1
+for i in range(crazyflies):
+    crazyflie = 'crazyflie_' + str(i)
+    t = td.Thread(target=connection, args=[crazyflie, uris[i], i], daemon=True)
+    t.start()
+
+
+
+# i0_started = False
+# i1_started = False
+# i2_started = False
+# #i3_started = False
 
 position_handler = sv.PositionHandler()
 path_generator = pg.PathGenerator(30, 30)
@@ -143,15 +185,13 @@ gathering = [False, False, False]
 
 food_found = False
 food_gathering = False
-food_position = [7, 6]
+food_position = None
 
 # this time is used for main/swarm execution
 time_passed = 0
 response_time = 0.2 #s
 ready = False
 
-
-gathering_time = 0
 
 # this time is used for delay between started threads for gather of food
 departure_delay = 2
@@ -162,22 +202,32 @@ ready_counter = 0
 dance_time_passed = 0
 dancing = False
 
-# _, message_food = mqttClient.messages.pop(0)
-# print('food locations are: ', message_food['food'])
-# food_position = message_food['food']
+while food_position is None:
+    try:
+        _, message_food = mqttClient.messages.pop(0)
+        print('food locations are: ', message_food['food'])
+        food_position = message_food['food']
+        print(food_position)
+    except:
+        pass
 
 timer = tm.Timer()
 running = True
 while running:
+    # receive messages from every component
+    # i0_started = getCurrentPosition(sim_drone_interface_0, i0_started)
+    # i1_started = getCurrentPosition(sim_drone_interface_1, i1_started)
+    # i2_started = getCurrentPosition(sim_drone_interface_2, i2_started)
+
     # execution is only done after specific amount of time has passed
-    for i in len(drone_interfaces):
+    for i in range(len(drone_interfaces)):
         if drone_interfaces[i].ready:
             ready_counter += 1
         if ready_counter == len(drone_interfaces):
             ready = True
 
     time_passed += timer.tick()
-    if time_passed > response_time and ready:
+    if time_passed > response_time: #and ready:
         if not initialized:
             for interface in drone_interfaces:
                 # prepare the simulation by giving the drones a start position
@@ -190,6 +240,7 @@ while running:
                     if interface.drone_current_position:
                         interface.drone_start_position = interface.drone_current_position
                         print('drone start position is: ', interface.drone_start_position)
+            print(initialized)
             initialized = True
 
         if initialized and not assigned_scout and not food_found:
