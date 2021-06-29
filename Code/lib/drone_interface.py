@@ -82,17 +82,19 @@ class DroneInterface:
     DEFAULT_HEIGHT = 0.3
     flightTime = 2
     wait_time = 1.5
-    def __init__(self, name, URI):
+    def __init__(self, name, URI, scf):
         cflib.crtp.init_drivers()
         self.URI = URI
         self.periferal = Periferal(self.URI)
-        self.cells = 8
+        self.cells = 5
         self.message = ''
+        self.scf = scf
 
         self.drone_start_position = []
         self.drone_current_position = []
         self.drone_destination = None
         self.name = name
+        self.ready = False
 
         self.drone_states = ['available', 'idle', 'scouting', 'returning' 'dancing', 'gathering']
         self.drone_state = self.drone_states[0]
@@ -111,9 +113,10 @@ class DroneInterface:
         while True:
             if not len(self.mqttClient.messages) <= 0:
                 _, self.message = self.mqttClient.messages.pop(0)
-                print('Message from controller: ', self.message[self.name])
+                #print('Message from controller: ', self.message[self.name])
                 self.drone_current_position = self.message[self.name]
                 self.mqttClient.messages = []
+                self.ready = True
                 time.sleep(0.2)
 
     def createMessage(self, state, nextPosition):
@@ -124,31 +127,31 @@ class DroneInterface:
         return message
 
     def takeoff(self):
-        with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as scf:
+        #with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as self.scf:
             self.bussy = True
-            self.periferal.activate_high_level_commander(scf)
-            self.periferal.reset_estimator(scf)
-            self.periferal.activate_mellinger_controller(scf, False)
-            commander = scf.cf.high_level_commander
+            self.periferal.activate_high_level_commander(self.scf)
+            self.periferal.reset_estimator(self.scf)
+            self.periferal.activate_mellinger_controller(self.scf, False)
+            commander = self.scf.cf.high_level_commander
             commander.takeoff(DroneInterface.DEFAULT_HEIGHT, 1.5)
             time.sleep(DroneInterface.flightTime)
             self.bussy = False
             self.flying = True
 
     def droneMove(self, destination):
-        with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as scf:
+        #with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as self.scf:
             x = (destination[0] - self.drone_current_position[0]) / self.cells / 2
             y = - (destination[1] - self.drone_current_position[1]) / self.cells / 2
-            self.periferal.activate_mellinger_controller(scf, False)
-            commander = scf.cf.high_level_commander
+            self.periferal.activate_mellinger_controller(self.scf, False)
+            commander = self.scf.cf.high_level_commander
             commander.go_to(x, y, 0, 0, DroneInterface.flightTime, relative=True)
             time.sleep(0.2)
 
     def droneDance(self):
-        with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as scf:
+        #with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as self.scf:
             self.bussy = True
-            self.periferal.activate_mellinger_controller(scf, False)
-            commander = scf.cf.high_level_commander
+            self.periferal.activate_mellinger_controller(self.scf, False)
+            commander = self.scf.cf.high_level_commander
             commander.go_to(0, 0, 0, 2*math.pi, 3*DroneInterface.flightTime, relative=True)
             time.sleep(3*DroneInterface.flightTime)
             commander.go_to(0, 0, 0, -2*math.pi, 3*DroneInterface.flightTime, relative=True)
@@ -161,9 +164,9 @@ class DroneInterface:
             self.bussy = False
 
     def droneLand(self):
-        with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as scf:
-            self.periferal.activate_mellinger_controller(scf, False)
-            commander = scf.cf.high_level_commander
+        #with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as self.scf:
+            self.periferal.activate_mellinger_controller(self.scf, False)
+            commander = self.scf.cf.high_level_commander
             commander.land(0.0, DroneInterface.flightTime)
             time.sleep(DroneInterface.flightTime)
             commander.stop()
