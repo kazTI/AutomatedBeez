@@ -1,7 +1,7 @@
 import math
 
 class MovementController:
-    def __init__(self, timestep, flight_height=0.3, drone_speed=0.1):
+    def __init__(self, timestep, flight_height=0.3, drone_speed=0.2):
         self.started = False
         self.flight_height = flight_height                                          # m
         self.drone_speed = drone_speed                                              # m/s

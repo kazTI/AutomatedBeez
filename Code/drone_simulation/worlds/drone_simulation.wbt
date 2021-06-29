@@ -5,20 +5,20 @@ WorldInfo {
   coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation 0.41554121657285403 -0.8558929970913783 -0.3078517092028078 4.934152972215145
-  position 4.645644686291025 2.2052695569549536 2.7374895893758273
+  orientation 0.5790517022932082 -0.7723044457339913 -0.2612373808834609 5.321348622671783
+  position 3.674212524344127 2.513931277948997 3.588163208146
 }
 TexturedBackground {
 }
 TexturedBackgroundLight {
 }
 RectangleArena {
-  translation 1.5 0 1.5
-  floorSize 3 3
+  translation 1 0 1
+  floorSize 2 2
   floorTileSize 0.2 0.2
 }
 Robot {
-  translation 2.05 0.005 2.45
+  translation 0.5 0.005 0.7
   children [
     DEF BODY Group {
       children [
@@ -138,21 +138,21 @@ Robot {
   supervisor TRUE
 }
 drone {
-  translation 1.85 0.005 2.65
+  translation 0.3 0.005 0.5
   name "drone_1"
   controller "drone1_controllerV2"
 }
 drone {
-  translation 1.65 0.005 2.45
+  translation 0.5 0.005 0.3
   name "drone_2"
   controller "drone2_controllerV2"
 }
 drone {
-  translation 1.85 0.005 2.25
+  translation 0.7 0.005 0.5
   controller "real_drone_controller"
 }
 Solid {
-  translation 1.85 0 2.45
+  translation 0.5 0 0.5
   children [
     DEF hive Shape {
       appearance PBRAppearance {
@@ -170,7 +170,7 @@ Solid {
   name "hive"
 }
 Solid {
-  translation 2.45 0 1.85
+  translation 1.5 0 1.3
   children [
     DEF hive Shape {
       appearance PBRAppearance {
@@ -186,22 +186,4 @@ Solid {
     }
   ]
   name "food1"
-}
-Solid {
-  translation 0.55 0 1.05
-  children [
-    DEF hive Shape {
-      appearance PBRAppearance {
-        baseColor 1 0.3 0
-        roughness 1
-        metalness 0
-      }
-      geometry Cylinder {
-        height 0.001
-        radius 0.15
-        subdivision 72
-      }
-    }
-  ]
-  name "food2"
 }

@@ -298,7 +298,7 @@ if __name__ == '__main__':
 
     droneOrder('uri1','foodSearch', drone1Position, destination)
     time.sleep(5)
-    droneOrder()
+    # droneOrder()
     time.sleep(10)
     stopDrone('uri1')
     #droneOrder('uri2','dance')
