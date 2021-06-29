@@ -1,6 +1,8 @@
 
 import lib.services as sv
 import lib.credentials as cr
+import time
+import threading as td
 
 class SimDroneInterface:
     def __init__(self, name):
@@ -34,6 +36,10 @@ class SimDroneInterface:
         self.drone_destination = None
         self.drone_state = self.drone_states[0]
 
+        self.ready = False
+
+        self.position_handler = sv.PositionHandler()
+
         self.drone_publish_topic = name + '_instructions'
         self.drone_subscribe_topics = [name + '_response', ]
         self.clientName = self.name_dict[name]
@@ -41,6 +47,8 @@ class SimDroneInterface:
         self.mqttClient = sv.MqttClient(self.credentials[0], self.credentials[1], self.credentials[2], self.credentials[3])
         self.mqttClient.createClient(self.clientName, self.drone_subscribe_topics)
         self.mqttClient.startConnection()
+        position_thread = td.Thread(target=self.getCurrentPosition, daemon = True)
+        position_thread.start()
 
         # message about drone location are received on subscribed topic
             # topic: name + _response
@@ -51,6 +59,19 @@ class SimDroneInterface:
         # received 'message' example:
             # topic: 'drone_1_response'
             # body: [341, [5, 0, 7]])
+
+    def getCurrentPosition(self):
+        while True:
+            if not len(self.mqttClient.messages) <= 0:
+                message = self.mqttClient.messages.pop(0)
+                _, [_, [x, y, z]] = message
+                # print('Raw message from controller: ', (x, y, z))
+                message = (self.position_handler.getAbsoluteCoordX(x), y, self.position_handler.getAbsoluteCoordZ(z))
+                # print('Message from controller: ', message)
+                self.drone_current_position = message
+                self.mqttClient.messages = []
+                self.ready = True
+                time.sleep(0.2)
 
     def createMessage(self, command, next_position = None):
         message =   {
