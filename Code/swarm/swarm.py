@@ -199,7 +199,7 @@ while running:
 
     # execution is only done after specific amount of time has passed
     for i in drone_interfaces:
-        if drone_interfaces[i]:
+        if drone_interfaces[i].ready:
             ready_counter += 1
         if ready_counter == len(drone_interfaces):
             ready = True
