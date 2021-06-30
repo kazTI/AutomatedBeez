@@ -148,30 +148,23 @@ def connection(crazyflie, uri, i):
             time.sleep(10)
 
 sim_drone_interface_0 = sdi.SimDroneInterface('drone_0')
-sim_drone_interface_0.drone_start_position = [20, 24]
-#drone_interfaces.append(sim_drone_interface_0)
+sim_drone_interface_0.drone_start_position = [2, 3]
+# drone_interfaces.append(sim_drone_interface_0)
 
 sim_drone_interface_1 = sdi.SimDroneInterface('drone_1')
-sim_drone_interface_1.drone_start_position = [18, 26]
-#drone_interfaces.append(sim_drone_interface_1)
+sim_drone_interface_1.drone_start_position = [1, 2]
+# drone_interfaces.append(sim_drone_interface_1)
 
 sim_drone_interface_2 = sdi.SimDroneInterface('drone_2')
-sim_drone_interface_2.drone_start_position = [16, 24]
-#drone_interfaces.append(sim_drone_interface_2)
+sim_drone_interface_2.drone_start_position = [2, 1]
+# drone_interfaces.append(sim_drone_interface_2)
 
 uris = ['radio://0/80/2M/E7E7E7E7E8', 'radio://0/80/2M/E7E7E7E7E7']
 crazyflies = 1
+drone_3_URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E8')
 for i in range(crazyflies):
     crazyflie = 'crazyflie_' + str(i)
-    t = td.Thread(target=connection, args=[crazyflie, uris[i], i], daemon=True)
-    t.start()
-
-
-
-# i0_started = False
-# i1_started = False
-# i2_started = False
-# #i3_started = False
+    drone_interfaces.append(di.DroneInterface(crazyflie, uri_helper.uri_from_env(default=uris[i])))
 
 position_handler = sv.PositionHandler()
 path_generator = pg.PathGenerator(30, 30)
@@ -185,7 +178,7 @@ gathering = [False, False, False]
 
 food_found = False
 food_gathering = False
-food_position = None
+food_position = [4, 4]
 
 # this time is used for main/swarm execution
 time_passed = 0
@@ -227,7 +220,7 @@ while running:
             ready = True
 
     time_passed += timer.tick()
-    if time_passed > response_time: #and ready:
+    if time_passed > response_time:# and ready:
         if not initialized:
             for interface in drone_interfaces:
                 # prepare the simulation by giving the drones a start position
@@ -324,9 +317,6 @@ while running:
 
             departure_time += departure_timer.tick()
             if departure_time > departure_delay:
-                for interface in drone_interfaces:
-                    print(interface, interface.drone_state)
-                    print(index)
                 interface = drone_interfaces[index]
                 if isinstance(interface, sdi.SimDroneInterface):
                     gathering_thread = td.Thread(target = gatherFood, args=[index, interface])

@@ -89,7 +89,7 @@ def createMessageFood(food_locations_list=[]):
 
 global click
 click = 0
-cells = 8
+cells = 5
 pixel_bound_x_low = 0
 pixel_bound_x_high = 0
 pixel_bound_y_low = 0
@@ -172,7 +172,7 @@ while True:
     if time_passed > response_time:
         print('Coordinates:')
         print('    - pixel coords drone 1: ', (x1, y1))
-        mqttClient.sendPublish('real_drone_instructions', [x1, y1], 0)
+        mqttClient.sendPublish('real_drone_instructions', ('movement', [x1, y1]), 0)
         x1, y1 = calculateGridCoordinates((x1, y1), cells)
         print('    - grid coords drone 1: ', (x1, y1))
 

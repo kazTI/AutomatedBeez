@@ -7,6 +7,7 @@ WorldInfo {
 Viewpoint {
   orientation 0.5790517022932082 -0.7723044457339913 -0.2612373808834609 5.321348622671783
   position 3.674212524344127 2.513931277948997 3.588163208146
+  followType "None"
 }
 TexturedBackground {
 }
@@ -15,7 +16,7 @@ TexturedBackgroundLight {
 RectangleArena {
   translation 1 0 1
   floorSize 2 2
-  floorTileSize 0.2 0.2
+  floorTileSize 0.4 0.4
 }
 Robot {
   translation 0.5 0.005 0.7

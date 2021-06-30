@@ -101,6 +101,7 @@ class DroneInterface:
         self.scout = False
         self.bussy = False
         self.flying = False
+        self.ready = False
 
         self.credentials = cr.getCredentials()
         self.mqttClient = sv.MqttClient(self.credentials[0], self.credentials[1], self.credentials[2], self.credentials[3])
@@ -115,6 +116,7 @@ class DroneInterface:
                 _, self.message = self.mqttClient.messages.pop(0)
                 #print('Message from controller: ', self.message[self.name])
                 self.drone_current_position = self.message[self.name]
+                self.ready = True
                 self.mqttClient.messages = []
                 self.ready = True
                 time.sleep(0.2)
