@@ -89,7 +89,7 @@ def createMessageFood(food_locations_list=[]):
 
 global click
 click = 0
-cells = 5
+cells = 10
 pixel_bound_x_low = 0
 pixel_bound_x_high = 0
 pixel_bound_y_low = 0

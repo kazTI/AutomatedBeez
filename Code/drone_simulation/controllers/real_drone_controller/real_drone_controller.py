@@ -76,8 +76,8 @@ while drone.step(timestep) != -1:
     elif True: # movement and flying:
         if message:
             x, z = message[1]
-            x = (x - 437) * (100 / 346) / 100
-            z = (z - 147) * (100 / 365) / 100
+            x = (x - 305) * (200 / 660) / 100
+            z = (z - 24) * (200 / 683) / 100
             print(x, z)
             current_position[0] = x
             current_position[2] = z
