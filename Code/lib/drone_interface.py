@@ -129,7 +129,8 @@ class DroneInterface:
         return message
 
     def takeoff(self):
-        #with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as self.scf:
+        # with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as scf:
+            self.mqttClient.sendPublish('real_drone_instructions', ('takeoff', []), 0)
             self.bussy = True
             self.periferal.activate_high_level_commander(self.scf)
             self.periferal.reset_estimator(self.scf)
@@ -150,7 +151,8 @@ class DroneInterface:
             time.sleep(0.2)
 
     def droneDance(self):
-        #with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as self.scf:
+        # with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as scf:
+            self.mqttClient.sendPublish('real_drone_instructions', ('dance', []), 0)
             self.bussy = True
             self.periferal.activate_mellinger_controller(self.scf, False)
             commander = self.scf.cf.high_level_commander
@@ -166,8 +168,9 @@ class DroneInterface:
             self.bussy = False
 
     def droneLand(self):
-        #with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as self.scf:
-            self.periferal.activate_mellinger_controller(self.scf, False)
+        # with SyncCrazyflie(self.URI, cf=Crazyflie(rw_cache='./cache')) as scf:
+            self.mqttClient.sendPublish('real_drone_instructions', ('land', []), 0)
+            self.periferal.activate_mellinger_controller(scf, False)
             commander = self.scf.cf.high_level_commander
             commander.land(0.0, DroneInterface.flightTime)
             time.sleep(DroneInterface.flightTime)

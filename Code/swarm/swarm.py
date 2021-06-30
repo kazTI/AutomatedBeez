@@ -159,7 +159,11 @@ sim_drone_interface_2 = sdi.SimDroneInterface('drone_2')
 sim_drone_interface_2.drone_start_position = [2, 1]
 # drone_interfaces.append(sim_drone_interface_2)
 
+<<<<<<< Updated upstream
 uris = ['radio://0/80/2M/E7E7E7E7E8', 'radio://0/80/2M/E7E7E7E7E7']
+=======
+uris = ['radio://0/80/2M/E7E7E7E7E8', 'radio://0/80/2M/E7E7E7E7E8']
+>>>>>>> Stashed changes
 crazyflies = 1
 drone_3_URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E8')
 for i in range(crazyflies):
@@ -178,7 +182,11 @@ gathering = [False, False, False]
 
 food_found = False
 food_gathering = False
+<<<<<<< Updated upstream
 food_position = [4, 4]
+=======
+food_position = [9, 9]
+>>>>>>> Stashed changes
 
 # this time is used for main/swarm execution
 time_passed = 0
@@ -241,6 +249,7 @@ while running:
             assigned_scout = True
 
         if assigned_scout and not food_found:
+            print(interface, interface.drone_state, assigned_scout, food_found)
             if interface.drone_state == 'available':
                 interface.takeoff()
                 if isinstance(interface, sdi.SimDroneInterface):
