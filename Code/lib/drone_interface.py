@@ -75,6 +75,7 @@ class DroneInterface:
         print('yo')
         orders = self.name, 'takeoff'
         message_drone = self.createMessageDrone(orders, None)
+        self.orders_mqttClient.sendPublish('real_drone_instructions', ('takeoff', []), 0)
         self.orders_mqttClient.sendPublish('crazyflie_control', message_drone, 0)
         while not self.flying_message:
             try:
@@ -95,12 +96,14 @@ class DroneInterface:
     def droneDance(self):
         orders = self.name, 'dance'
         message_drone = self.createMessageDrone(orders, None)
+        self.orders_mqttClient.sendPublish('real_drone_instructions', ('dance', []), 0)
         self.orders_mqttClient.sendPublish('crazyflie_control', message_drone, 0)
         time.sleep(6*DroneInterface.flightTime)
 
     def droneLand(self):
         orders = self.name, 'land'
         message_drone = self.createMessageDrone(orders, None)
+        self.orders_mqttClient.sendPublish('real_drone_instructions', ('land', []), 0)
         self.orders_mqttClient.sendPublish('crazyflie_control', message_drone, 0)
         time.sleep(DroneInterface.flightTime)
         self.flying_message = False

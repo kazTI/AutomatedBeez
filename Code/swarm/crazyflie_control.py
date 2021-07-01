@@ -147,8 +147,8 @@ def drone_orders(uri, name):
                     if message_orders[1] == 'land' and flying:
                         #Periferal.activate_mellinger_controller(scf, False)
                         commander = scf.cf.high_level_commander
-                        commander.land(0.0, flightTime)
-                        time.sleep(flightTime)
+                        commander.land(0.0, flightTime+1)
+                        time.sleep(flightTime+1)
                         commander.stop()
                         flying = False
                 message_orders = []

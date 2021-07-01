@@ -18,13 +18,24 @@ class PathGenerator:
         for node in neighbors:
             node.walkable = True
 
+    def setToObstacle(self, *position):
+        node = self.grid.node(position[0], position[1])
+        node.walkable = False
+        print(self.grid.grid_str())
+
+    def setToWalkable(self, *position):
+        node = self.grid.node(position[0], position[1])
+        node.walkable = True
+        print(self.grid.grid_str())
+
     def generateAStarPath(self, start, end):
         # print(start, end)
         start = self.grid.node(start[0], start[1])
         end = self.grid.node(end[0], end[1])
         pathfinder = AStarFinder(diagonal_movement=DiagonalMovement.never)
         path, _ = pathfinder.find_path(start, end, self.grid)
-        path.pop(0)
+        if path:
+            path.pop(0)
         self.grid.cleanup()
         return start, end, path[0]
 
@@ -36,16 +47,16 @@ class PathGenerator:
 if __name__ == '__main__':
     path_generator = PathGenerator(10, 10)
 
-    # start = (1, 1)
-    # end = (9, 9)
-    # _, __, path = path_generator.generateAStarPath(start, end)
-    # print(path)
+    start = (2, 1)
+    end = (9, 9)
+    # print(path_generator.setToObstacle(2,1))
+    _, __, path = path_generator.generateAStarPath(start, end)
+    print(path)
 
     # path_generator.printPath(_, __, path)
-    # print(path_generator.grid.walkable(2,1))
     # path_generator.grid.
-    neighbors = path_generator.makeNeighborsObstacles(1, 1)
-    path_generator.printPath()
+    # neighbors = path_generator.makeNeighborsObstacles(1, 1)
+    # path_generator.printPath()
 
-    path_generator.makeNeighborsWalkable(neighbors)
-    path_generator.printPath()
+    # path_generator.makeNeighborsWalkable(neighbors)
+    # path_generator.printPath()

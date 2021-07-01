@@ -29,31 +29,56 @@ mqttClient.startConnection()
 ready = False
 ready_counter = 0
 
-#timer related stuf
+initialized = False
+assigned_scout = False
+dancing = False
+
+# TIMERS FOR THE PROGRAM
 time_passed = 0
 response_time = 0.2 #s
-departure_delay = 2
-departure_time = 0
 timer = tm.Timer()
+
+departure = False
+departure_delay = 3
+departure_time = 0
 departure_timer = tm.Timer()
 
-#interface related stuf
-interfaces = []
-uris = ['radio://0/80/2M/E7E7E7E7E8', 'radio://0/80/2M/E7E7E7E7E7']
-crazyflies = 1
-sim_drones = 3
-sim_drone_start = [[20, 24], [18, 26], [16, 24]]
 
 #food related stuf
 global gathering
 gathering = [False, False, False]
-index = 0
-path_generator = pg.PathGenerator(30, 30)
+
+
+food_position = []
+path_generator = pg.PathGenerator(10, 10)
 position_handler = sv.PositionHandler()
-food_position = None
+
+
 food_found = False
 food_gathering = False
 
+
+#interface related stuf
+interfaces = []
+
+sim_drone_start = [[2, 3], [1, 2], [2, 1]]
+sim_drones = 3
+for i in range(sim_drones):
+    name = 'drone_' + str(i)
+    sim_drone_interface = sdi.SimDroneInterface(name)
+    sim_drone_interface.drone_start_position = sim_drone_start[i]
+    interfaces.append(sim_drone_interface)
+
+uris = ['radio://0/80/2M/E7E7E7E7E8', 'radio://0/80/2M/E7E7E7E7E7']
+crazyflies = 1
+for i in range(crazyflies):
+    crazyflie = 'crazyflie_' + str(i)
+    drone_interface = di.DroneInterface(crazyflie, uris[i])
+    interfaces.append(drone_interface)
+    while drone_interface.connected != 'connected':
+        pass
+
+######## BEGIN OF FUNCTION DEFINITION ########
 def executeSimDroneMovement(interface, current_position, next_position):
     # fix this when values are higher then normal
     pos = (next_position[0] - current_position[0], next_position[1] - current_position[1])
@@ -70,9 +95,6 @@ def executeSimDroneMovement(interface, current_position, next_position):
 
 def gatherFood(index, interface):
     if isinstance(interface, sdi.SimDroneInterface):
-        print('now its time to gather food!!')
-        # print(interface.drone_current_position)
-        print(interface.gathering_food)
         while interface.gathering_food:
             if not gathering[index]:
                 gathering_timer = tm.Timer()
@@ -85,6 +107,7 @@ def gatherFood(index, interface):
                     if interface.drone_current_position[1] == 1:
                         interface.drone_state = 'gathering'
                         interface.flying = True
+
                 if interface.flying and interface.drone_state == 'gathering':
                     current_position = [interface.drone_current_position[0], interface.drone_current_position[2]]
                     if current_position != food_position:
@@ -111,55 +134,39 @@ def gatherFood(index, interface):
                                 interface.flying = False
                                 interface.drone_state = 'available'
                                 interface.gathering_food = False
-                gathering_time = 0
-    
     elif isinstance(interface, di.DroneInterface):
-        interface.drone_state = 'gathering'
         if not interface.flying:
+            interface.drone_state = 'gathering'
             interface.takeoff()
+
         loop = True
         command_time = 0
         command_delay = 0.2
         while loop:
             command_time += timer.tick()
             if command_time > command_delay and interface.flying:
-                if interface.drone_current_position != food_position and interface.drone_state == 'gathering':
-                    _, _, next_position = path_generator.generateAStarPath(interface.drone_current_position, food_position)
-                    interface.droneMove(next_position)
-                elif interface.drone_current_position == food_position:
-                    interface.droneLand()
-                    interface.drone_state = 'returning'
-
-                elif interface.drone_state == 'returning' and not interface.flying:
-                    interface.takeoff()
-                elif interface.drone_state == 'returning' and interface.flying:
-                    if interface.drone_current_position != interface.drone_start_position:
-                        _, _, next_position = path_generator.generateAStarPath(interface.drone_current_position, interface.drone_start_position)
+                if interface.drone_state == 'gathering':
+                    if interface.drone_current_position != food_position:
+                        _, _, next_position = path_generator.generateAStarPath(interface.drone_current_position, food_position)
                         interface.droneMove(next_position)
-                    elif interface.drone_current_position == interface.drone_start_position:
+                    elif interface.drone_current_position == food_position:
                         interface.droneLand()
-                        interface.drone_state = 'available'
-                        loop = False
-                command_time = 0
+                        interface.drone_state = 'returning'
+                
+                if interface.drone_state == 'returning':
+                    if not interface.flying:
+                        interface.takeoff()
+                    else:
+                        if interface.drone_current_position != interface.drone_start_position:
+                            _, _, next_position = path_generator.generateAStarPath(interface.drone_current_position, interface.drone_start_position)
+                            interface.droneMove(next_position)
+                        else:
+                            interface.droneLand()
+                            interface.drone_state = 'available'
+                            loop = False
+######## END OF FUNCTION DEFINITION ########
 
-
-
-for i in range(sim_drones):
-    drone = 'drone_' + str(i)
-    sim_drone_interface = sdi.SimDroneInterface(drone)
-    sim_drone_interface.drone_start_position = sim_drone_start[i]
-    #interfaces.append(sim_drone_interface)
-
-for i in range(crazyflies):
-    crazyflie = 'crazyflie_' + str(i)
-    drone_interface = di.DroneInterface(crazyflie, uris[i])
-    interfaces.append(drone_interface)
-    while drone_interface.connected != 'connected':
-        pass
-
-
-
-while food_position is None:
+while not food_position:
     try:
         _, message_food = mqttClient.messages.pop(0)
         food_position = message_food['food']
@@ -167,36 +174,33 @@ while food_position is None:
     except:
         pass
 
-while True:
-    
-    for i in range(len(interfaces)):
-        if interfaces[i].ready:
-            ready_counter += 1
-            if ready_counter == len(interfaces):
-                ready = True
 
+while True:
     time_passed += timer.tick()
-    if time_passed > response_time and ready:
+    if time_passed > response_time and interfaces[3].ready:# and interfaces[1].ready and interfaces[2].ready and interface[3].ready:
+        
+        # INITIALIZING EVERYTHING FOR THE EXECUTION OF BEHAVIOR (SIMULATION DRONES GET THERE START POS HERE)
         if not initialized:
             for interface in interfaces:
-                # prepare the simulation by giving the drones a start position
                 if isinstance(interface, sdi.SimDroneInterface):
                     message = [round(position_handler.getDestCoordX(interface.drone_start_position[0]), 2), 0,
-                            round(position_handler.getDestCoordZ(interface.drone_start_position[1]), 2)]
+                               round(position_handler.getDestCoordZ(interface.drone_start_position[1]), 2)]
                     interface.drone_current_position = [interface.drone_start_position[0], 0, interface.drone_start_position[1]]
                     interface.start(message)
+                    initialized = True
                 elif isinstance(interface, di.DroneInterface):
-                    if interface.drone_current_position:
+                    if not interface.drone_start_position:
                         interface.drone_start_position = interface.drone_current_position
-                        print('drone start position is: ', interface.drone_start_position)
-            initialized = True
+                        initialized = True
 
+        # ASSIGNING A SCOUT WHICH WILL LOOK FOR FOOD
         if initialized and not assigned_scout and not food_found:
-            for drone in interfaces:
-                if isinstance(interface, di.DroneInterface):
-                    interface = drone
+            for _interface in interfaces:
+                if isinstance(_interface, di.DroneInterface):
+                    interface = _interface
                     assigned_scout = True
 
+        # MAIN CODE FOR SEARCHING FOOD
         if assigned_scout and not food_found:
             if interface.drone_state == 'available' and not interface.flying:
                 interface.takeoff()
@@ -231,6 +235,7 @@ while True:
                             if not dancing:
                                 dancing_timer = tm.Timer()
                                 dancing = True
+                                dance_time_passed = 0
                             
                             dance_time_passed += dancing_timer.tick()
                             if dance_time_passed < 14:
@@ -262,31 +267,34 @@ while True:
                     elif interface.drone_current_position == interface.drone_start_position:
                         interface.droneDance()
                         interface.droneLand()
-                        interface.drone_start_position = 0
                         interface.drone_state = 'available'
                         food_found = True
 
+        # MAIN CODE FOR FOOD GATHERING
         if food_found and not food_gathering:
             if not departure:
                 departure_timer = tm.Timer()
                 departure = True
-                for interface in interfaces:
-                    if isinstance(interface, sdi.SimDroneInterface):
-                        interface.gathering_food = True
-
+                index = 0
 
             departure_time += departure_timer.tick()
             if departure_time > departure_delay:
                 interface = interfaces[index]
                 if isinstance(interface, sdi.SimDroneInterface):
-                    gathering_thread = td.Thread(target = gatherFood, args=[index, interface])
+                    interface.gathering_food = True
+                    gathering_thread = td.Thread(target = gatherFood, args=[index, interface], daemon=True)
                     gathering_thread.start()
                 else:
                     if index == len(interfaces) - 1:
-                        gatherFood(index, interface)
-            index += 1
-            if index == len(interfaces):
-                food_gathering = True
-                index = 0
-            departure_time = 0
+                        # gathering_thread = td.Thread(target = gatherFood, args=[index, interface], daemon=True)
+                        # gathering_thread.start()
+                        gatherFood(index, interface) # IT IS POSSIBLE THAT THE THREAD IS STILL NOT WORKING
+                departure_time = 0
+
+                index += 1
+                if index == len(interfaces):
+                    food_gathering = True
+                    departure = False
+                    index = 0
+
         time_passed = 0

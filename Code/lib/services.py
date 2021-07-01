@@ -5,7 +5,7 @@ import time as tm
 class PositionHandler:
     grid_length = 2         # meters
     grid_tile_size = 0.2    # meters
-    offset = [0.05, 0.005, 0.05]
+    offset = [0.1, 0.005, 0.1]
     def __init__(self):
         self.grid_cells = int (self.grid_length / self.grid_tile_size)
 
