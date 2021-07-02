@@ -1,12 +1,12 @@
 import math
 
 class MovementController:
-    def __init__(self, timestep, flight_height=0.3, drone_speed=0.2):
+    def __init__(self, timestep, flight_height=0.3, drone_speed=0.1):
         self.started = False
         self.flight_height = flight_height                                          # m
         self.drone_speed = drone_speed                                              # m/s
         self.simulated_drone_speed = timestep * self.drone_speed / 1000             # m/0.0032s
-        self.rotation_speed = 2*math.pi * timestep / 6000
+        self.rotation_speed = 2*math.pi * timestep / 4000
         
         self.current_position = []
         self.rotation = [0, 1, 0, 0]

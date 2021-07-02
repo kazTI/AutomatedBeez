@@ -29,7 +29,7 @@ mqttClient.startConnection()
 drone_speed = 0.2
 flight_height = 0.3
 simulated_drone_speed = timestep * drone_speed / 1000
-rotation_speed = 2*math.pi * timestep / 6000
+rotation_speed = 2*math.pi * timestep / 4000
 
 flying = False
 taking_off = False
@@ -45,10 +45,9 @@ reverse = False
 x = 0.7
 z = 0.5
 
-message = ''
+message = ['', '']
 while drone.step(timestep) != -1:
     current_position = drone_node.getPosition()
-
     # if there are messages process them
     if not len(mqttClient.messages) <= 0:
         message = mqttClient.messages.pop(0)
@@ -61,10 +60,22 @@ while drone.step(timestep) != -1:
             dancing = True
         elif message[0] == 'land':
             landing = True
-        elif flying and message[0] == 'movement':
-            movement = True
-        mqttClient.messages = []
+        movement = False
 
+        if message[0] == 'movement' and not taking_off and not dancing and not landing:
+            movement = True
+        # mqttClient.messages = []
+
+
+    if movement:
+        x, z = message[1]
+        x = (x - 305) * (200 / 660) / 100
+        z = (z - 24) * (200 / 683) / 100
+        # print(x, z)
+        current_position[0] = x
+        current_position[2] = z
+        if not taking_off or not dancing or not landing:
+            translation_handler.setSFVec3f(current_position)
 
     if taking_off:
         if current_position[1] < flight_height:
@@ -72,35 +83,27 @@ while drone.step(timestep) != -1:
             translation_handler.setSFVec3f(current_position)
         else:
             taking_off = False
-            flying = True
-    elif True: # movement and flying:
-        if message:
-            x, z = message[1]
-            x = (x - 305) * (200 / 660) / 100
-            z = (z - 24) * (200 / 683) / 100
-            print(x, z)
-            current_position[0] = x
-            current_position[2] = z
-            translation_handler.setSFVec3f(current_position)
-    elif dancing:
+
+    if dancing:
         if rotation[3] < 2*math.pi and not reverse:
             rotation[3] += rotation_speed
             rotation_handler.setSFRotation(rotation)
+            
             if rotation[3] > 2*math.pi:
                 reverse = True
         elif rotation[3] > 0 and reverse:
             rotation[3] -= rotation_speed
             rotation_handler.setSFRotation(rotation)
+            
             if reverse and round(rotation[3], 4) == 0:
                 rotation[3] = 0
-                rotating = False
                 dancing = False
-    elif landing:
+    
+    if landing:
         if current_position[1] > 0.005:
             current_position[1] -= simulated_drone_speed
             translation_handler.setSFVec3f(current_position)
         else:
             landing = False
-            flying = False
 
     # print(current_position)
